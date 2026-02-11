@@ -1,0 +1,53 @@
+import { useState, useEffect } from 'react';
+
+export function useMediaQuery(query) {
+  const [matches, setMatches] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia(query);
+    
+    if (media.matches !== matches) {
+      setMatches(media.matches);
+    }
+
+    const listener = () => setMatches(media.matches);
+    media.addEventListener('change', listener);
+
+    return () => media.removeEventListener('change', listener);
+  }, [matches, query]);
+
+  return matches;
+}
+
+export function useIsMobile() {
+  return useMediaQuery('(max-width: 768px)');
+}
+
+export function useIsTablet() {
+  return useMediaQuery('(min-width: 769px) and (max-width: 1024px)');
+}
+
+export function useIsDesktop() {
+  return useMediaQuery('(min-width: 1025px)');
+}
+
+export const breakpoints = {
+  mobile: '768px',
+  tablet: '1024px',
+  desktop: '1025px'
+};
+
+export const responsive = {
+  mobile: (styles) => ({
+    '@media (max-width: 768px)': styles
+  }),
+  tablet: (styles) => ({
+    '@media (min-width: 769px) and (max-width: 1024px)': styles
+  }),
+  desktop: (styles) => ({
+    '@media (min-width: 1025px)': styles
+  }),
+  notMobile: (styles) => ({
+    '@media (min-width: 769px)': styles
+  })
+};

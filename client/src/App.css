@@ -1,0 +1,654 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-family);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+button {
+  font-family: var(--font-family);
+  cursor: pointer;
+  border: none;
+  outline: none;
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow var(--duration-short) var(--easing-standard);
+}
+
+input, textarea, select {
+  font-family: var(--font-family);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -468px 0;
+  }
+  100% {
+    background-position: 468px 0;
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Material Design 3 Button Styles */
+.btn {
+  height: 40px;
+  padding: 0 24px;
+  border-radius: var(--radius-full);
+  font: var(--label-large);
+  font-weight: 500;
+  letter-spacing: 0.1px;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  transition: all var(--duration-short) var(--easing-standard);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-filled {
+  background-color: var(--color-primary-60);
+  color: var(--color-text-inverse);
+  box-shadow: var(--elevation-0);
+}
+
+/* State layer on hover */
+.btn-filled::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: var(--color-text-inverse);
+  opacity: 0;
+  transition: opacity var(--duration-short) var(--easing-standard);
+}
+
+.btn-filled:hover:not(:disabled)::after {
+  opacity: var(--state-hover);
+}
+
+.btn-filled:focus:not(:disabled)::after {
+  opacity: var(--state-focus);
+}
+
+.btn-filled:active:not(:disabled)::after {
+  opacity: var(--state-press);
+}
+
+.btn-filled:hover:not(:disabled) {
+  box-shadow: var(--elevation-1);
+}
+
+.btn-filled:active:not(:disabled) {
+  box-shadow: var(--elevation-0);
+  transform: scale(0.98);
+}
+
+.btn-tonal {
+  background-color: var(--color-primary-90);
+  color: var(--color-primary-30);
+  box-shadow: var(--elevation-0);
+}
+
+.btn-tonal::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: var(--color-primary-30);
+  opacity: 0;
+  transition: opacity var(--duration-short) var(--easing-standard);
+}
+
+.btn-tonal:hover:not(:disabled)::after {
+  opacity: var(--state-hover);
+}
+
+.btn-tonal:focus:not(:disabled)::after {
+  opacity: var(--state-focus);
+}
+
+.btn-tonal:active:not(:disabled)::after {
+  opacity: var(--state-press);
+}
+
+.btn-tonal:hover:not(:disabled) {
+  box-shadow: var(--elevation-1);
+  background-color: var(--color-primary-80);
+}
+
+.btn-tonal:active:not(:disabled) {
+  box-shadow: var(--elevation-0);
+  transform: scale(0.98);
+}
+
+.btn-outlined {
+  background-color: transparent;
+  color: var(--color-primary-60);
+  border: 1px solid var(--color-outline);
+}
+
+.btn-outlined::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: var(--color-primary-60);
+  opacity: 0;
+  transition: opacity var(--duration-short) var(--easing-standard);
+}
+
+.btn-outlined:hover:not(:disabled)::after {
+  opacity: var(--state-hover);
+}
+
+.btn-outlined:focus:not(:disabled)::after {
+  opacity: var(--state-focus);
+}
+
+.btn-outlined:active:not(:disabled)::after {
+  opacity: var(--state-press);
+}
+
+.btn-outlined:hover:not(:disabled) {
+  background-color: var(--color-primary-90);
+  border-color: var(--color-primary-60);
+}
+
+.btn-outlined:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.btn-text {
+  background-color: transparent;
+  color: var(--color-primary-60);
+  padding: 0 12px;
+}
+
+.btn-text:hover:not(:disabled) {
+  background-color: var(--color-primary-90);
+}
+
+.btn-text:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.btn-elevated {
+  background-color: var(--color-primary-90);
+  color: var(--color-primary-30);
+  box-shadow: var(--elevation-1);
+}
+
+.btn-elevated::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: var(--color-primary-30);
+  opacity: 0;
+  transition: opacity var(--duration-short) var(--easing-standard);
+}
+
+.btn-elevated:hover:not(:disabled)::after {
+  opacity: var(--state-hover);
+}
+
+.btn-elevated:focus:not(:disabled)::after {
+  opacity: var(--state-focus);
+}
+
+.btn-elevated:active:not(:disabled)::after {
+  opacity: var(--state-press);
+}
+
+.btn-elevated:hover:not(:disabled) {
+  box-shadow: var(--elevation-2);
+  background-color: var(--color-primary-80);
+}
+
+.btn-elevated:active:not(:disabled) {
+  box-shadow: var(--elevation-0);
+  transform: scale(0.98);
+}
+
+.btn:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+.btn-sm {
+  height: 32px;
+  padding: 0 16px;
+  font: var(--label-medium);
+}
+
+.btn-lg {
+  height: 48px;
+  padding: 0 32px;
+  font: var(--label-large);
+}
+
+/* Ripple effect for buttons */
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1), height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+.btn:active::before {
+  width: 300px;
+  height: 300px;
+}
+
+.btn-tonal::before,
+.btn-elevated::before {
+  background: rgba(0, 116, 232, 0.3);
+}
+
+/* Material Design 3 Input Styles */
+.input-group {
+  position: relative;
+  margin-bottom: var(--spacing-lg);
+}
+
+.input-label {
+  display: block;
+  font: var(--label-large);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-sm);
+  transition: color var(--duration-short) var(--easing-standard);
+}
+
+.input-field {
+  width: 100%;
+  height: 56px;
+  padding: 0 var(--spacing-lg);
+  border: 1px solid var(--color-outline);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface-1);
+  font: var(--body-large);
+  color: var(--color-text-primary);
+  transition: all var(--duration-short) var(--easing-standard);
+}
+
+.input-field::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+/* State layer for inputs */
+.input-field::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: var(--color-primary-60);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-short) var(--easing-standard);
+}
+
+.input-field:hover:not(:disabled)::after {
+  opacity: calc(var(--state-hover) * 0.08);
+}
+
+.input-field:focus::after {
+  opacity: 0;
+}
+
+.input-field:focus {
+  border-color: var(--color-primary-60);
+  outline: none;
+  box-shadow: 0 0 0 1px var(--color-primary-60), 0 2px 4px rgba(0, 116, 232, 0.1);
+}
+
+.input-field:focus + .input-label {
+  color: var(--color-primary-60);
+}
+
+.input-field:disabled {
+  background-color: var(--color-surface-2);
+  color: var(--color-text-disabled);
+  cursor: not-allowed;
+  opacity: 0.38;
+}
+
+.input-field:disabled:hover {
+  border-color: var(--color-outline);
+}
+
+.textarea-field {
+  min-height: 120px;
+  padding: var(--spacing-md) var(--spacing-lg);
+  resize: vertical;
+}
+
+.textarea-field:focus {
+  box-shadow: 0 0 0 1px var(--color-primary-60), 0 2px 4px rgba(0, 116, 232, 0.1);
+}
+
+.select-field {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%2379747E' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--spacing-md) center;
+  background-size: 24px;
+  padding-right: var(--spacing-xxl);
+}
+
+.select-field:focus {
+  box-shadow: 0 0 0 1px var(--color-primary-60), 0 2px 4px rgba(0, 116, 232, 0.1);
+}
+
+.error-field {
+  border-color: var(--color-error-60);
+}
+
+.error-field:focus {
+  border-color: var(--color-error-60);
+  box-shadow: 0 0 0 1px var(--color-error-60);
+}
+
+.error-field:focus + .input-label {
+  color: var(--color-error-60);
+}
+
+.error-message {
+  font: var(--label-small);
+  color: var(--color-error-60);
+  margin-top: var(--spacing-xs);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+/* Disable selection on buttons */
+button {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Material Design 3 Card Styles */
+.card {
+  background-color: var(--color-surface-1);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--elevation-1);
+  overflow: hidden;
+  transition: box-shadow var(--duration-short) var(--easing-standard);
+}
+
+.card:hover {
+  box-shadow: var(--elevation-2);
+}
+
+.card-elevated {
+  box-shadow: var(--elevation-2);
+}
+
+.card-elevated:hover {
+  box-shadow: var(--elevation-3);
+}
+
+.card-filled {
+  background-color: var(--color-surface-2);
+  box-shadow: var(--elevation-0);
+}
+
+.card-outlined {
+  background-color: var(--color-surface-1);
+  border: 1px solid var(--color-outline);
+  box-shadow: var(--elevation-0);
+}
+
+.card-header {
+  padding: var(--spacing-lg);
+  border-bottom: 1px solid var(--color-outline);
+}
+
+.card-content {
+  padding: var(--spacing-lg);
+}
+
+.card-actions {
+  padding: var(--spacing-md) var(--spacing-lg);
+  display: flex;
+  gap: var(--spacing-sm);
+  justify-content: flex-end;
+}
+
+/* Badge Styles */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  font: var(--label-small);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-primary {
+  background-color: var(--color-primary-90);
+  color: var(--color-primary-30);
+}
+
+.badge-secondary {
+  background-color: var(--color-secondary-90);
+  color: var(--color-secondary-30);
+}
+
+.badge-error {
+  background-color: var(--color-error-90);
+  color: var(--color-error-20);
+}
+
+.badge-success {
+  background-color: var(--color-secondary-90);
+  color: var(--color-secondary-30);
+}
+
+.badge-tonal {
+  background-color: var(--color-surface-3);
+  color: var(--color-text-secondary);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-surface-2);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-outline);
+  border-radius: var(--radius-sm);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-disabled);
+}
+
+/* Touch improvements */
+@media (hover: none) and (pointer: coarse) {
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  input, textarea, select {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  body {
+    background: white;
+  }
+  
+  button,
+  .no-print {
+    display: none !important;
+  }
+}
+
+/* Loading spinner */
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f4f6;
+  border-top: 4px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Material Design 3 Toast/Snackbar */
+.toast {
+  position: fixed;
+  bottom: var(--spacing-xl);
+  right: var(--spacing-xl);
+  background-color: var(--color-inverse-surface);
+  color: var(--color-text-inverse);
+  padding: var(--spacing-md) var(--spacing-xl);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--elevation-2);
+  font: var(--body-medium);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  animation: slideInRight var(--duration-medium) var(--easing-emphasized-decelerate);
+  z-index: 9999;
+  max-width: 560px;
+}
+
+.toast.success {
+  border-left: 4px solid var(--color-secondary-40);
+}
+
+.toast.error {
+  border-left: 4px solid var(--color-error-60);
+}
+
+.toast.warning {
+  border-left: 4px solid var(--color-error-40);
+}
+
+.toast.info {
+  border-left: 4px solid var(--color-primary-60);
+}
+
+/* Material Design 3 Skeleton */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface-2) 0px,
+    var(--color-surface-3) 40px,
+    var(--color-surface-2) 80px
+  );
+  background-size: 468px 100%;
+  animation: shimmer var(--duration-long) ease-in-out infinite;
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-text {
+  height: 16px;
+  margin-bottom: var(--spacing-sm);
+}
+
+.skeleton-title {
+  height: 24px;
+  margin-bottom: var(--spacing-md);
+  width: 60%;
+}
+
+.skeleton-circle {
+  border-radius: 50%;
+}
