@@ -145,8 +145,8 @@ function output(data) {
 function printHelp(user) {
   const help = {
     name: 'TaskPulse CLI API',
-    version: '2.0.0',
-    description: 'Authenticated CLI for TaskPulse with bot token support',
+  version: '1.0.5',
+  description: 'Authenticated CLI for TaskPulse with bot token support',
     usage: 'TASKPULSE_API_TOKEN=your_bot_token cli-api.js <command> [subcommand] [options]',
     authentication: {
       type: user.userType,

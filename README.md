@@ -1,8 +1,8 @@
 # ⚡ TaskPulse
 
-**A modern, feature-rich task management application with Kanban boards, AI-powered insights, and progressive web app support.**
+**A modern, feature-rich task management application with Kanban boards for you and your AI assistent with progressive web app support.**
 
-![TaskPulse](https://img.shields.io/badge/version-2.0.0-blue)
+![TaskPulse](https://img.shields.io/badge/version-1.0.5-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Node](https://img.shields.io/badge/node-%3E%3D16.0.0-brightgreen)
 ![React](https://img.shields.io/badge/react-18.2.0-blue)
@@ -12,8 +12,9 @@
 
 ## 🌟 What is TaskPulse?
 
-TaskPulse is a Project Management system for Humans and their AI assistents. It combines the simplicity of a Kanban board with powerful features like AI-powered task suggestions, mobile-first design, and offline support.
-It solves the problem that tasks are not being done because it needs its human to provide feedback. With TaskPulse the AI can maintain Projects, Tasks that belong to that Project and Subtask that contain Multiple Choice Questions or Open Questions.  Tasks and Subtasks can be assigned to the Human so they know their feedback is required.
+TaskPulse is an application created to help you and your AI assistent to work more efficiently on different projects. It has an API interface on server level for your bot to access to create, modify and remove Projects, Tasks and subtaks. The subtasks can be Multiple Choice questions where you simple choose an option or an Open question where you can answer in more details. 
+
+The purpose is to make transparant on what projects your AI is working, the tasks in that project than cannot be completed until you profide feedback. 
 
 **Built with:** React, Node.js, Express, and SQLite  
 **Perfect for:** Development teams, project managers, freelancers, and anyone who needs to organize their work efficiently.
@@ -22,7 +23,7 @@ It solves the problem that tasks are not being done because it needs its human t
 
 ## ✨ Key Features
 
-### 🆕 New in v2.0
+### 🆕 New in v1.0.0
 
 #### 🤖 **AI Assistant Integration**
 - **API Skill File** - AI assistants can download `GET /api/skill.md` to learn TaskPulse API
@@ -54,11 +55,6 @@ It solves the problem that tasks are not being done because it needs its human t
 - **Priority Levels** - Low, Medium, High, and Critical with color coding
 - **Task Assignment** - Assign tasks to team members for collaboration
 
-### 🤖 AI-Powered Insights
-- **Smart Suggestions** - AI-powered task recommendations based on your workflow
-- **Automated Assignments** - Intelligent task assignment suggestions
-- **Priority Recommendations** - AI helps you prioritize your workload
-- **API-Ready** - Complete API for AI assistant integration
 
 ### 📱 Mobile-First Design
 - **Responsive UI** - Works perfectly on desktop, tablet, and mobile
@@ -115,7 +111,6 @@ It solves the problem that tasks are not being done because it needs its human t
 | Feature | TaskPulse | Trello | Jira | Asana |
 |----------|-----------|--------|-------|-------|
 | Self-Hosted | ✅ Free | ❌ No | ✅ Paid | ❌ No |
-| AI Features | ✅ Built-in | ❌ No | ✅ Paid | ✅ Paid |
 | Mobile PWA | ✅ Native-feel | ✅ Good | ✅ Good | ✅ Good |
 | Bot API | ✅ Included | ❌ Limited | ✅ Paid | ❌ No |
 | Offline Mode | ✅ Yes | ❌ No | ❌ No | ❌ No |
@@ -127,17 +122,17 @@ It solves the problem that tasks are not being done because it needs its human t
 ## 📸 Screenshots
 
 ### Login Screen
-<img src="https://github.com/najef1979-code/TaskPulse/blob/main/TaskPulse-Login.png?raw=true" alt="TaskPulse Login Screen" width="800"/>
+<img src="https://github.com/najef1979-code/TemPAzure/blob/main/TaskPulse-Login.png?raw=true" alt="TaskPulse Login Screen" width="800"/>
 
 *Clean, modern login interface with optional registration link*
 
 ### Dashboard - Kanban Board
-<img src="https://github.com/najef1979-code/TaskPulse/blob/main/TaskPulse-DashBoard.png?raw=true" alt="TaskPulse Dashboard" width="800"/>
+<img src="https://github.com/najef1979-code/TemPAzure/blob/main/TaskPulse-DashBoard.png?raw=true" alt="TaskPulse Dashboard" width="800"/>
 
 *Full-featured Kanban board with drag-and-drop task management, priority badges, and project navigation*
 
 ### My Assignments View
-<img src="https://github.com/najef1979-code/TaskPulse/blob/main/TaskPulse-MyAssingments.png?raw=true" alt="TaskPulse My Assignments" width="800"/>
+<img src="https://github.com/najef1979-code/TemPAzure/blob/main/TaskPulse-MyAssingments.png?raw=true" alt="TaskPulse My Assignments" width="800"/>
 
 *Dedicated view for tracking assigned tasks with status indicators and quick actions*
 
@@ -601,15 +596,6 @@ SOFTWARE.
 - Database: [SQLite](https://www.sqlite.org/)
 - Icons: [Lucide](https://lucide.dev/)
 - UI inspired by modern design systems
-
----
-
-## 📞 Support
-
-- **Documentation:** [USER_GUIDE.md](USER_GUIDE.md)
-- **Issues:** [GitHub Issues](https://github.com/najef1979-code/TaskPulse/issues)
-- **Discussions:** [GitHub Discussions](https://github.com/najef1979-code/TaskPulse/discussions)
-- **Email:** support@taskpulse.dev (if available)
 
 ---
 

@@ -398,5 +398,5 @@ Now that you know the basics, try:
 ---
 
 **Last Updated:** 2026-02-08  
-**TaskPulse Version:** 2.0.0  
+**TaskPulse Version:** 1.0.5
 **Purpose:** Quick Start Guide for End Users

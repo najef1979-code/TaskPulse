@@ -288,5 +288,5 @@ For complete API reference, visit: `http://SERVER:PORT/api`
 
 ---
 
-**TaskPulse Version:** 2.0.0  
+**TaskPulse Version:** 1.0.5
 **Skill Version:** 1.0.0

@@ -176,5 +176,5 @@ Default ports (can be changed in configuration):
 
 ---
 
-**TaskPulse Version:** 2.0.0  
+**TaskPulse Version:** 1.0.5
 **Last Updated:** 2026-02-11

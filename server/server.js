@@ -69,8 +69,8 @@ app.get('/api/skill.md', (req, res) => {
 app.get('/api', (req, res) => {
   res.json({
     name: 'TaskPulse API',
-    version: '2.0.0',
-    authentication: 'Hybrid (session for humans, token for bots)',
+  version: '1.0.5',
+  authentication: 'Hybrid (session for humans, token for bots)',
     documentation: {
       'GET /api': 'API documentation',
       'GET /api/skill.md': 'AI assistant skill file (markdown)',

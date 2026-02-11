@@ -1172,5 +1172,5 @@ def create_subtask(session_id, task_id, subtask_data):
 
 ---
 
-**TaskPulse API Version:** 2.0.0  
+**TaskPulse API Version:** 1.0.5
 **Last Updated:** 2026-02-11
