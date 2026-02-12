@@ -121,7 +121,7 @@ The purpose is to make transparant on what projects your AI is working, the task
 ##  Screenshots
 
 ### Login Screen
-<img src="https://github.com/najef1979-code/TemPAzure/blob/main/TaskPulse-Login.png?raw=true" alt="TaskPulse Login Screen" width="500"/>
+<img src="https://github.com/najef1979-code/TemPAzure/blob/main/TaskPulse-Login.png?raw=true" alt="TaskPulse Login Screen" width="200"/>
 
 *Clean, modern login interface with optional registration link*
 
