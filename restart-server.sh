@@ -1,11 +1,11 @@
 #!/bin/bash
-# Robust TaskPulse Server Startup Script
-# This script prevents port conflicts and ensures clean startup
+# TaskPulse Server Startup Script (Production Mode - Single Port)
+# This script starts the server in production mode serving both frontend and API
 
 set -e  # Exit on any error
 
 echo "╔══════════════════════════════════════════════════════════╗"
-echo "║  TaskPulse Server - Robust Startup                       ║"
+echo "║  TaskPulse Server - Production Mode (Single Port)          ║"
 echo "╚══════════════════════════════════════════════════════════╝"
 echo ""
 
@@ -20,11 +20,10 @@ else
     echo "✅ Port 3000 is free"
 fi
 
-# Kill any existing nodemon/node processes for TaskPulse
+# Kill any existing node processes for TaskPulse
 echo ""
 echo "🔍 Checking for orphaned TaskPulse processes..."
 pkill -f "node server.js" 2>/dev/null || true
-pkill -f "nodemon.*server" 2>/dev/null || true
 sleep 1
 echo "✅ Cleaned up any orphaned processes"
 
@@ -33,10 +32,19 @@ cd server
 
 # Start the server
 echo ""
-echo "🚀 Starting TaskPulse server..."
-echo "   Backend: http://localhost:3000"
-echo "   API Docs: http://localhost:3000/api"
+echo "🚀 Starting TaskPulse server in production mode..."
+echo ""
+echo "╔══════════════════════════════════════════════════════════╗"
+echo "║  Access URLs:                                              ║"
+echo "╠══════════════════════════════════════════════════════════╣"
+echo "║  Local:    http://localhost:3000                            ║"
+echo "║  Network:  http://192.168.2.128:3000                       ║"
+echo "║  Domain:   https://taskpulse.ceraimic.eu                      ║"
+echo "╚══════════════════════════════════════════════════════════╝"
+echo ""
+echo "   Frontend + API: Both served from port 3000"
+echo "   API Docs:      http://localhost:3000/api"
 echo ""
 
 # Run in foreground so we can see output
-npm run dev
+node server.js

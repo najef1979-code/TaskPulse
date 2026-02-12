@@ -41,7 +41,7 @@ async function request(method, path, body = null) {
 // Authentication
 export const authApi = {
   register: (userData) => request('POST', '/auth/register', userData),
-  login: (username, password) => request('POST', '/auth/login', { username, password }),
+  login: (email, password) => request('POST', '/auth/login', { username: email, password }),
   logout: () => request('POST', '/auth/logout'),
   getMe: () => request('GET', '/auth/me'),
   updatePassword: (oldPassword, newPassword) => request('POST', '/auth/update-password', { oldPassword, newPassword }),

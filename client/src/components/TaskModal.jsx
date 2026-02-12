@@ -9,8 +9,11 @@ export function TaskModal({ task, onClose, onUpdate, onSave }) {
   const [fullTask, setFullTask] = useState(null);
   const [loading, setLoading] = useState(true);
   const [editingDates, setEditingDates] = useState(false);
+  const [editingFiles, setEditingFiles] = useState(false);
   const [dueDate, setDueDate] = useState('');
   const [startDate, setStartDate] = useState('');
+  const [taskProvidedFile, setTaskProvidedFile] = useState('no_file');
+  const [taskFileReference, setTaskFileReference] = useState('');
   const [newSubtaskQuestion, setNewSubtaskQuestion] = useState('');
   const [newSubtaskOptions, setNewSubtaskOptions] = useState('');
   const [newSubtaskType, setNewSubtaskType] = useState('multiple_choice');
@@ -35,6 +38,8 @@ export function TaskModal({ task, onClose, onUpdate, onSave }) {
       setFullTask(data);
       setDueDate(data.due_date ? toISODate(data.due_date) : '');
       setStartDate(data.start_date ? toISODate(data.start_date) : '');
+      setTaskProvidedFile(data.provided_file || 'no_file');
+      setTaskFileReference(data.file_reference || '');
       setLoadedTaskId(task.id);
     } catch (err) {
       console.error('TaskModal: Failed to load task', err);
@@ -64,6 +69,20 @@ export function TaskModal({ task, onClose, onUpdate, onSave }) {
       onUpdate();
     } catch (err) {
       alert('Failed to update dates: ' + err.message);
+    }
+  };
+
+  const handleUpdateFiles = async () => {
+    try {
+      await tasksApi.update(task.id, {
+        provided_file: taskProvidedFile,
+        file_reference: taskProvidedFile !== 'no_file' ? taskFileReference : null
+      });
+      setEditingFiles(false);
+      loadFullTask();
+      onUpdate();
+    } catch (err) {
+      alert('Failed to update file references: ' + err.message);
     }
   };
 
@@ -232,6 +251,92 @@ export function TaskModal({ task, onClose, onUpdate, onSave }) {
               )}
               {!fullTask.start_date && !fullTask.due_date && (
                 <div style={styles.noDate}>No dates set</div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* File Reference Section */}
+        <div style={styles.filesSection}>
+          <div style={styles.filesSectionHeader}>
+            <h3 style={styles.sectionTitle}>File Reference</h3>
+            {!editingFiles && (
+              <button 
+                style={styles.editButton}
+                onClick={() => setEditingFiles(true)}
+              >
+                Edit
+              </button>
+            )}
+          </div>
+
+          {editingFiles ? (
+            <div style={styles.fileEditForm}>
+              <div style={styles.fileField}>
+                <label style={styles.fileSectionLabel}>File Type</label>
+                <select
+                  value={taskProvidedFile}
+                  onChange={(e) => setTaskProvidedFile(e.target.value)}
+                  style={styles.selectInput}
+                >
+                  <option value="no_file">No File</option>
+                  <option value="emailed">Emailed</option>
+                  <option value="on_disk">On Disk</option>
+                </select>
+              </div>
+              {taskProvidedFile !== 'no_file' && (
+                <div style={styles.fileField}>
+                  <label style={styles.fileSectionLabel}>
+                    {taskProvidedFile === 'emailed' ? 'Email Subject' : 'File Path'}
+                  </label>
+                  <input
+                    type="text"
+                    placeholder={
+                      taskProvidedFile === 'emailed'
+                        ? "Email subject (e.g., 'Report Attached')"
+                        : "File path (e.g., '/documents/report.pdf')"
+                    }
+                    value={taskFileReference}
+                    onChange={(e) => setTaskFileReference(e.target.value)}
+                    style={styles.fileReferenceInput}
+                    required
+                  />
+                </div>
+              )}
+              <div style={styles.fileEditButtons}>
+                <button onClick={handleUpdateFiles} style={styles.saveDateButton}>
+                  Save
+                </button>
+                <button 
+                  onClick={() => {
+                    setEditingFiles(false);
+                    setTaskProvidedFile(fullTask.provided_file || 'no_file');
+                    setTaskFileReference(fullTask.file_reference || '');
+                  }}
+                  style={styles.cancelDateButton}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div style={styles.fileDisplay}>
+              {fullTask.provided_file !== 'no_file' ? (
+                <div style={styles.fileReferenceDisplay}>
+                  <span style={styles.fileIcon}>
+                    {fullTask.provided_file === 'emailed' ? '📧' : '💾'}
+                  </span>
+                  <div>
+                    <div style={styles.fileTypeLabel}>
+                      {fullTask.provided_file === 'emailed' ? 'Emailed' : 'On Disk'}
+                    </div>
+                    <div style={styles.fileValue}>
+                      {fullTask.file_reference}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div style={styles.noFile}>No file reference</div>
               )}
             </div>
           )}
@@ -554,16 +659,15 @@ const styles = {
     transition: 'background-color var(--duration-short) var(--easing-standard)',
   },
   description: {
-    color: 'var(--color-text-secondary)',
+    color: '#64748b',
     marginBottom: 'var(--spacing-lg)',
-    lineHeight: '1.5',
-    font: 'var(--body-medium)',
+    fontSize: '12px',
   },
   metadata: {
     display: 'flex',
     gap: 'var(--spacing-lg)',
-    fontSize: 'var(--body-medium)',
-    color: 'var(--color-text-secondary)',
+    fontSize: '12px',
+    color: '#64748b',
     marginBottom: 'var(--spacing-lg)',
   },
   divider: {
@@ -581,8 +685,7 @@ const styles = {
     marginBottom: 'var(--spacing-sm)',
   },
   sectionTitle: {
-    font: 'var(--title-large)',
-    fontWeight: '500',
+    font: '15px / normal 500 var(--font-family)',
     marginBottom: 'var(--spacing-lg)',
     color: 'var(--color-text-primary)',
   },
@@ -599,8 +702,7 @@ const styles = {
     marginBottom: '12px',
   },
   subtaskSectionHeaderTitle: {
-    fontSize: '16px',
-    fontWeight: '600',
+    font: '13px / normal 600 var(--font-family)',
     paddingBottom: '8px',
     borderBottom: '2px solid #e2e8f0',
   },
@@ -624,12 +726,11 @@ const styles = {
     border: '1px solid var(--color-outline)',
   },
   subtaskQuestion: {
-    fontWeight: '500',
+    font: '12px / normal 500 var(--font-family)',
     marginBottom: 'var(--spacing-md)',
     display: 'flex',
     alignItems: 'center',
     gap: 'var(--spacing-sm)',
-    font: 'var(--body-medium)',
     color: 'var(--color-text-primary)',
   },
   checkmark: {
@@ -648,7 +749,7 @@ const styles = {
     backgroundColor: 'var(--color-surface-1)',
     cursor: 'pointer',
     transition: 'all var(--duration-short) var(--easing-standard)',
-    font: 'var(--label-large)',
+    fontSize: '14px',
   },
   optionSelected: {
     borderColor: 'var(--color-primary-60)',
@@ -658,7 +759,7 @@ const styles = {
   },
   answer: {
     marginTop: 'var(--spacing-md)',
-    fontSize: 'var(--body-medium)',
+    fontSize: '14px',
     color: 'var(--color-secondary-60)',
   },
   newSubtaskForm: {
@@ -667,8 +768,7 @@ const styles = {
     borderRadius: 'var(--radius-md)',
   },
   formTitle: {
-    font: 'var(--title-medium)',
-    fontWeight: '500',
+    font: '14px / normal 500 var(--font-family)',
     marginBottom: 'var(--spacing-md)',
     color: 'var(--color-text-primary)',
   },
@@ -679,7 +779,7 @@ const styles = {
     marginBottom: 'var(--spacing-md)',
     border: '1px solid var(--color-outline)',
     borderRadius: 'var(--radius-sm)',
-    fontSize: 'var(--body-large)',
+    font: '13px / normal 400 var(--font-family)',
     boxSizing: 'border-box',
     backgroundColor: 'var(--color-surface-1)',
     color: 'var(--color-text-primary)',
@@ -691,7 +791,7 @@ const styles = {
     marginBottom: 'var(--spacing-md)',
     border: '1px solid var(--color-outline)',
     borderRadius: 'var(--radius-sm)',
-    fontSize: 'var(--body-large)',
+    font: '13px / normal 400 var(--font-family)',
     minHeight: '80px',
     resize: 'vertical',
     boxSizing: 'border-box',
@@ -709,7 +809,7 @@ const styles = {
     borderRadius: 'var(--radius-full)',
     cursor: 'pointer',
     fontWeight: '500',
-    fontSize: 'var(--label-large)',
+    fontSize: '14px',
     textTransform: 'uppercase',
     letterSpacing: '0.1px',
     transition: 'all var(--duration-short) var(--easing-standard)',
@@ -728,7 +828,7 @@ const styles = {
     backgroundColor: 'var(--color-surface-3)',
     border: '1px solid var(--color-outline)',
     borderRadius: 'var(--radius-full)',
-    fontSize: 'var(--label-large)',
+    fontSize: '14px',
     cursor: 'pointer',
     color: 'var(--color-primary-60)',
     textTransform: 'uppercase',
@@ -748,9 +848,9 @@ const styles = {
     flexDirection: 'column',
   },
   dateLabel: {
-    font: 'var(--label-large)',
+    fontSize: '14px',
     fontWeight: '500',
-    color: 'var(--color-text-secondary)',
+    color: '#64748b',
     marginBottom: 'var(--spacing-xs)',
   },
   dateInput: {
@@ -758,7 +858,7 @@ const styles = {
     padding: '0 var(--spacing-lg)',
     border: '1px solid var(--color-outline)',
     borderRadius: 'var(--radius-sm)',
-    fontSize: 'var(--body-large)',
+    font: '13px / normal 400 var(--font-family)',
     backgroundColor: 'var(--color-surface-1)',
     color: 'var(--color-text-primary)',
     transition: 'all var(--duration-short) var(--easing-standard)',
@@ -777,7 +877,7 @@ const styles = {
     borderRadius: 'var(--radius-full)',
     cursor: 'pointer',
     fontWeight: '500',
-    fontSize: 'var(--label-large)',
+    fontSize: '14px',
     textTransform: 'uppercase',
     letterSpacing: '0.1px',
     transition: 'all var(--duration-short) var(--easing-standard)',
@@ -792,7 +892,7 @@ const styles = {
     borderRadius: 'var(--radius-full)',
     cursor: 'pointer',
     fontWeight: '500',
-    fontSize: 'var(--label-large)',
+    fontSize: '14px',
     textTransform: 'uppercase',
     letterSpacing: '0.1px',
     transition: 'all var(--duration-short) var(--easing-standard)',
@@ -847,7 +947,7 @@ const styles = {
     padding: '0 var(--spacing-lg)',
     border: '2px solid var(--color-outline)',
     borderRadius: 'var(--radius-sm)',
-    fontSize: 'var(--body-large)',
+    font: '13px / normal 400 var(--font-family)',
     boxSizing: 'border-box',
     backgroundColor: 'var(--color-surface-1)',
     color: 'var(--color-text-primary)',
@@ -871,9 +971,9 @@ const styles = {
     marginBottom: 'var(--spacing-md)',
   },
   typeLabel: {
-    fontSize: 'var(--label-large)',
+    fontSize: '14px',
     fontWeight: '500',
-    color: 'var(--color-text-secondary)',
+    color: '#64748b',
     marginBottom: 'var(--spacing-sm)',
     display: 'block',
   },
@@ -889,7 +989,7 @@ const styles = {
     borderRadius: 'var(--radius-sm)',
     backgroundColor: 'var(--color-surface-1)',
     cursor: 'pointer',
-    fontSize: 'var(--label-large)',
+    fontSize: '14px',
     fontWeight: '500',
     color: 'var(--color-text-secondary)',
     textTransform: 'uppercase',
@@ -908,9 +1008,9 @@ const styles = {
     marginBottom: 'var(--spacing-md)',
   },
   fileLabel: {
-    fontSize: 'var(--label-large)',
+    fontSize: '14px',
     fontWeight: '500',
-    color: 'var(--color-text-secondary)',
+    color: '#64748b',
     marginBottom: 'var(--spacing-sm)',
     display: 'block',
   },
@@ -921,10 +1021,80 @@ const styles = {
     marginBottom: 'var(--spacing-sm)',
     border: '1px solid var(--color-outline)',
     borderRadius: 'var(--radius-sm)',
-    fontSize: 'var(--body-large)',
+    font: '13px / normal 400 var(--font-family)',
     boxSizing: 'border-box',
     backgroundColor: 'var(--color-surface-1)',
     color: 'var(--color-text-primary)',
     transition: 'all var(--duration-short) var(--easing-standard)',
+  },
+  filesSection: {
+    marginBottom: 'var(--spacing-xl)',
+  },
+  filesSectionHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 'var(--spacing-md)',
+  },
+  fileEditForm: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--spacing-md)',
+    padding: 'var(--spacing-lg)',
+    backgroundColor: 'var(--color-surface-2)',
+    borderRadius: 'var(--radius-md)',
+  },
+  fileField: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  fileSectionLabel: {
+    fontSize: '14px',
+    fontWeight: '500',
+    color: '#64748b',
+    marginBottom: 'var(--spacing-xs)',
+  },
+  fileReferenceInput: {
+    height: '56px',
+    padding: '0 var(--spacing-lg)',
+    border: '1px solid var(--color-outline)',
+    borderRadius: 'var(--radius-sm)',
+    font: '13px / normal 400 var(--font-family)',
+    backgroundColor: 'var(--color-surface-1)',
+    color: 'var(--color-text-primary)',
+    transition: 'all var(--duration-short) var(--easing-standard)',
+  },
+  fileEditButtons: {
+    display: 'flex',
+    gap: '8px',
+  },
+  fileDisplay: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '8px',
+  },
+  fileReferenceDisplay: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    padding: 'var(--spacing-md)',
+    backgroundColor: 'var(--color-primary-90)',
+    borderRadius: 'var(--radius-sm)',
+  },
+  fileTypeLabel: {
+    fontSize: '12px',
+    fontWeight: '500',
+    color: 'var(--color-primary-40)',
+    textTransform: 'uppercase',
+    marginBottom: '2px',
+  },
+  fileValue: {
+    fontSize: '14px',
+    color: 'var(--color-primary-20)',
+  },
+  noFile: {
+    fontSize: '14px',
+    color: '#94a3b8',
+    fontStyle: 'italic',
   },
 };

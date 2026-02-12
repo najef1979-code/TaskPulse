@@ -987,6 +987,6 @@ For additional help:
 
 ---
 
-**TaskPulse Version:** 1.0.5
-**Admin Guide Version:** 1.0.5
-**Last Updated:** 2026-02-11
+**TaskPulse Version:** 1.1.0
+**Admin Guide Version:** 1.1.0
+**Last Updated:** 2026-02-12

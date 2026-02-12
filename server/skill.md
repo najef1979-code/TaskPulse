@@ -91,6 +91,23 @@ curl "http://SERVER:PORT/api/tasks?projectId=1" \
   -H "x-api-token: bot_YOUR_TOKEN"
 ```
 
+### 3.5. List Users (for Assignment)
+```bash
+curl http://SERVER:PORT/api/users \
+  -H "x-api-token: bot_YOUR_TOKEN"
+```
+
+**Response includes:**
+- All active users (both humans and bots)
+- User IDs needed for task/subtask assignment
+- `user_type`: "human" or "bot"
+- `username` and `full_name`
+
+**Use user IDs when assigning tasks or subtasks:**
+- When creating a task, use the `assignedTo` field
+- When creating a subtask, use the `assignedTo` field
+- Bots appear first in the list and have `user_type: "bot"`
+
 ### 4. Create a Task
 ```bash
 curl -X POST http://SERVER:PORT/api/tasks \
@@ -101,9 +118,23 @@ curl -X POST http://SERVER:PORT/api/tasks \
     "title": "Complete documentation",
     "description": "Write comprehensive docs",
     "priority": "high",
-    "dueDate": "2026-03-01T00:00:00.000Z"
+    "dueDate": "2026-03-01T00:00:00.000Z",
+    "assignedTo": 2,
+    "provided_file": "emailed",
+    "file_reference": "Documentation Request Email"
   }'
 ```
+
+**Task Assignment:**
+- Use `assignedTo` with a user ID (including bot IDs)
+- Get user IDs from `GET /api/users`
+- Both human users and bots can be assigned tasks
+
+**File Reference Options:**
+- `provided_file`: `"no_file"` (default), `"emailed"`, or `"on_disk"`
+- `file_reference`: Required when `provided_file` is `"emailed"` or `"on_disk"`
+  - For `"emailed"`: Email subject (e.g., "Documentation Request Email")
+  - For `"on_disk"`: File path (e.g., "/docs/requirements.pdf")
 
 ### 5. Start a Task
 ```bash
@@ -125,9 +156,20 @@ curl -X POST http://SERVER:PORT/api/tasks/1/subtasks \
   -d '{
     "question": "Which framework?",
     "type": "multiple_choice",
-    "options": ["React", "Vue", "Angular"]
+    "options": ["React", "Vue", "Angular"],
+    "assignedTo": 3,
+    "provided_file": "on_disk",
+    "file_reference": "/docs/framework_comparison.pdf"
   }'
 ```
+
+**Subtask Assignment:**
+- Use `assignedTo` with a user ID (including bot IDs)
+- Get user IDs from `GET /api/users`
+
+**Subtask File Reference:**
+- Same options as tasks: `provided_file` and `file_reference`
+- Supports `"no_file"`, `"emailed"`, or `"on_disk"`
 
 ### 8. Answer a Subtask
 ```bash
@@ -288,5 +330,5 @@ For complete API reference, visit: `http://SERVER:PORT/api`
 
 ---
 
-**TaskPulse Version:** 1.0.5
-**Skill Version:** 1.0.0
+**TaskPulse Version:** 1.1.0
+**Skill Version:** 1.1.0

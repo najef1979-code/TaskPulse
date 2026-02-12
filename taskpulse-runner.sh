@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# TaskPulse Runner Script
-# Starts both servers, performs health checks, and runs integration tests
+# TaskPulse Runner Script (Production Mode - Single Port)
+# Starts the server, performs health checks, and runs integration tests
 
 set -e
 
@@ -13,11 +13,9 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-BACKEND_PORT=3000
-FRONTEND_PORT=3050
-BACKEND_URL="http://localhost:${BACKEND_PORT}"
-FRONTEND_URL="http://localhost:${FRONTEND_PORT}"
-API_URL="${BACKEND_URL}/api"
+SERVER_PORT=3000
+SERVER_URL="http://localhost:${SERVER_PORT}"
+API_URL="${SERVER_URL}/api"
 
 # Log file
 LOG_FILE="startup.log"
@@ -74,7 +72,7 @@ while [[ $# -gt 0 ]]; do
             echo "Options:"
             echo "  --test      Run demo project creation tests (default: skipped)"
             echo "  --no-test   Skip demo project creation tests (default)"
-            echo "  --test-only Only run tests, don't start servers"
+            echo "  --test-only Only run tests, don't start server"
             exit 1
             ;;
     esac
@@ -94,42 +92,32 @@ kill_port() {
     fi
 }
 
-# Stop existing servers (only if not test-only)
+# Stop existing server (only if not test-only)
 if [ "$TEST_ONLY" = false ]; then
-    print_header "Stopping existing servers..."
-    kill_port $BACKEND_PORT
-    kill_port $FRONTEND_PORT
+    print_header "Stopping existing server..."
+    kill_port $SERVER_PORT
 fi
 
 # Skip startup if test-only
 if [ "$TEST_ONLY" = false ]; then
-    # Start backend server
-    print_header "Starting backend server..."
+    # Start server in production mode
+    print_header "Starting TaskPulse server (production mode)..."
     cd server
-    nohup npm run dev > ../server.log 2>&1 &
-    BACKEND_PID=$!
+    NODE_ENV=production nohup node server.js > ../server.log 2>&1 &
+    SERVER_PID=$!
     cd ..
-    print_success "Backend server starting (PID: $BACKEND_PID)"
-    log "Backend PID: $BACKEND_PID"
-
-    # Start frontend server
-    print_header "Starting frontend server..."
-    cd client
-    nohup npm run dev > ../client.log 2>&1 &
-    FRONTEND_PID=$!
-    cd ..
-    print_success "Frontend server starting (PID: $FRONTEND_PID)"
-    log "Frontend PID: $FRONTEND_PID"
+    print_success "Server starting (PID: $SERVER_PID)"
+    log "Server PID: $SERVER_PID"
 
     # Health checks
     print_header "Performing health checks..."
     
-    # Check backend
-    BACKEND_READY=false
+    # Check server
+    SERVER_READY=false
     for i in {1..30}; do
-        if curl -s "${BACKEND_URL}/health" > /dev/null 2>&1; then
-            print_success "Backend is healthy on port $BACKEND_PORT"
-            BACKEND_READY=true
+        if curl -s "${SERVER_URL}/health" > /dev/null 2>&1; then
+            print_success "Server is healthy on port $SERVER_PORT"
+            SERVER_READY=true
             break
         fi
         echo -n "."
@@ -137,16 +125,16 @@ if [ "$TEST_ONLY" = false ]; then
     done
     echo
     
-    if [ "$BACKEND_READY" = false ]; then
-        print_error "Backend failed to start within 30 seconds"
+    if [ "$SERVER_READY" = false ]; then
+        print_error "Server failed to start within 30 seconds"
         exit 1
     fi
 
     # Check frontend
     FRONTEND_READY=false
     for i in {1..30}; do
-        if curl -s "${FRONTEND_URL}" > /dev/null 2>&1; then
-            print_success "Frontend is healthy on port $FRONTEND_PORT"
+        if curl -s "${SERVER_URL}" > /dev/null 2>&1; then
+            print_success "Frontend is serving on port $SERVER_PORT"
             FRONTEND_READY=true
             break
         fi
@@ -156,14 +144,13 @@ if [ "$TEST_ONLY" = false ]; then
     echo
     
     if [ "$FRONTEND_READY" = false ]; then
-        print_error "Frontend failed to start within 30 seconds"
+        print_error "Frontend failed to serve within 30 seconds"
         exit 1
     fi
 
-    print_success "Both servers are running!"
+    print_success "TaskPulse is running!"
     echo ""
-    echo -e "${GREEN}Backend:${NC}  ${BACKEND_URL}"
-    echo -e "${GREEN}Frontend:${NC} ${FRONTEND_URL}"
+    echo -e "${GREEN}Server (Frontend + API):${NC} ${SERVER_URL}"
     echo ""
 fi
 
@@ -258,12 +245,12 @@ fi
 # Final status
 echo ""
 print_header "TaskPulse Status"
-echo -e "${GREEN}✓ Backend:${NC}  Running on ${BACKEND_URL}"
-echo -e "${GREEN}✓ Frontend:${NC} Running on ${FRONTEND_URL}"
+echo -e "${GREEN}✓ Server:${NC}  Running on ${SERVER_URL}"
+echo -e "${GREEN}✓ Frontend:${NC}  Serving on ${SERVER_URL}"
+echo -e "${GREEN}✓ API:${NC}       ${SERVER_URL}/api"
 echo ""
 echo "Logs available at:"
 echo "  - server.log"
-echo "  - client.log"
 echo "  - startup.log"
 echo ""
 print_success "TaskPulse is ready to use!"

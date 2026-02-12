@@ -2,7 +2,7 @@
 
 **A modern, feature-rich task management application with Kanban boards for you and your AI assistent with progressive web app support.**
 
-![TaskPulse](https://img.shields.io/badge/version-1.0.5-blue)
+![TaskPulse](https://img.shields.io/badge/version-1.1.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Node](https://img.shields.io/badge/node-%3E%3D16.0.0-brightgreen)
 ![React](https://img.shields.io/badge/react-18.2.0-blue)
@@ -10,7 +10,7 @@
 
 ---
 
-## 🌟 What is TaskPulse?
+##  What is TaskPulse?
 
 TaskPulse is an application created to help you and your AI assistent to work more efficiently on different projects. It has an API interface on server level for your bot to access to create, modify and remove Projects, Tasks and subtaks. The subtasks can be Multiple Choice questions where you simple choose an option or an Open question where you can answer in more details. 
 
@@ -21,31 +21,30 @@ The purpose is to make transparant on what projects your AI is working, the task
 
 ---
 
-## ✨ Key Features
+## Key Features
 
-### 🆕 New in v1.0.0
 
-#### 🤖 **AI Assistant Integration**
+#### **AI Assistant Integration**
 - **API Skill File** - AI assistants can download `GET /api/skill.md` to learn TaskPulse API
 - **Smart Task Creation** - AI can create projects, tasks, and subtasks programmatically
 - **Automated Workflows** - Bots handle routine task management operations
 - **Decision Support** - Subtasks capture AI-driven decisions (multiple choice or open questions)
 - **File Reference Tracking** - Track emailed and on-disk files for AI workflows
 
-#### 👥 **Team-Based System**
+#### **Team-Based System**
 - **Team Isolation** - Each team has its own projects and tasks
 - **Team Admin** - Admin users can manage team members
 - **Join Requests** - Request to join teams with approval workflow
 - **Data Migration** - Seamless migration from personal to team-based work
 
-#### 🔐 **Bot API & Permissions**
+#### **Bot API & Permissions**
 - **Bot Creation** - Create API bots with custom permissions
 - **Granular Permissions** - Fine-tuned access control (read, create, update, delete)
 - **Token Authentication** - Secure API tokens for programmatic access
 - **Bot Management** - CLI tools for bot lifecycle management
 - **Activity Tracking** - Track bot actions in activity log
 
-### 📋 Visual Task Management
+### Visual Task Management
 - **Kanban Board** - Drag and drop tasks between columns (To Do, In Progress, Done)
 - **Task Cards** - Rich cards with priority badges, due dates, and assignees
 - **Subtasks** - Break down complex tasks into manageable pieces
@@ -56,26 +55,26 @@ The purpose is to make transparant on what projects your AI is working, the task
 - **Task Assignment** - Assign tasks to team members for collaboration
 
 
-### 📱 Mobile-First Design
+###  Mobile-First Design
 - **Responsive UI** - Works perfectly on desktop, tablet, and mobile
 - **Touch Gestures** - Swipe to move tasks, tap to edit
 - **PWA Support** - Install as a mobile app (iOS, Android, Desktop)
 - **Offline Mode** - Continue working without internet connection
 
-### 🔒 Security & Authentication
+###  Security & Authentication
 - **User Accounts** - Secure session-based authentication
 - **Bot API** - Create API bots with granular permissions
 - **Token-Based Auth** - For programmatic access and integrations
 - **Permission System** - Fine-grained access control
 - **Whitelisted Bot Access** - When hosted online, restrict API access to specific IPs for known bots while allowing human users from anywhere
 
-### 🚀 Developer-Friendly
+###  Developer-Friendly
 - **REST API** - Full API for integrations and automation
 - **Bot SDKs** - Easy bot creation for CI/CD workflows
 - **Webhooks Ready** - Architecture supports webhook integrations
 - **Comprehensive Docs** - API reference, admin guide, and quick start
 
-### 🎯 Productivity Boosters
+###  Productivity Boosters
 - **Due Dates** - Never miss a deadline with visual indicators
 - **Task Assignments** - Delegate work to team members
 - **Completion Tracking** - Automatic timestamps when tasks are completed
@@ -85,7 +84,7 @@ The purpose is to make transparant on what projects your AI is working, the task
 
 ---
 
-## 💡 Why Use TaskPulse?
+##  Why Use TaskPulse?
 
 ### For Teams
 - **Collaboration Made Easy** - Assign tasks, track progress, and coordinate work
@@ -119,10 +118,10 @@ The purpose is to make transparant on what projects your AI is working, the task
 
 ---
 
-## 📸 Screenshots
+##  Screenshots
 
 ### Login Screen
-<img src="https://github.com/najef1979-code/TemPAzure/blob/main/TaskPulse-Login.png?raw=true" alt="TaskPulse Login Screen" width="800"/>
+<img src="https://github.com/najef1979-code/TemPAzure/blob/main/TaskPulse-Login.png?raw=true" alt="TaskPulse Login Screen" width="500"/>
 
 *Clean, modern login interface with optional registration link*
 
@@ -138,7 +137,7 @@ The purpose is to make transparant on what projects your AI is working, the task
 
 ---
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### Prerequisites
 
@@ -208,13 +207,12 @@ npm run dev
 
 #### 5. Access TaskPulse
 
-- **Web UI:** Open http://localhost:3050 in your browser
+- **Web UI:** Open http://localhost:3000 in your browser
 - **API:** http://localhost:3000/api
 - **Health Check:** http://localhost:3000/health
 
----
 
-## 📖 Usage Guide
+##  Usage Guide
 
 ### First Steps
 
@@ -262,7 +260,7 @@ Use bots for:
 
 ---
 
-## 🔧 Configuration
+##  Configuration
 
 ### Environment Variables
 
@@ -298,8 +296,14 @@ NODE_ENV=development
 
 ### Port Configuration
 
+**Production Mode (v1.1.0+):**
+- **Single Port:** Both frontend and API served from port 3000
+- **Configuration:** Set `NODE_ENV=production` in `server/.env`
+
+**Development Mode:**
 - **Backend API:** Default 3000 (change in `server/.env`)
 - **Frontend:** Default 3050 (change in `client/vite.config.js`)
+- **Usage:** Run `npm run dev` in both server and client directories
 
 ### Database
 
@@ -312,21 +316,21 @@ TaskPulse uses SQLite by default for simplicity. The database file is created au
 
 ---
 
-## 📚 Documentation
+##  Documentation
 
 ### User Documentation
-- 📖 **[QUICKSTART.md](QUICKSTART.md)** - Quick start guide for end users
-- 📜 **[USER_GUIDE.md](USER_GUIDE.md)** - Main documentation index for users
+-  **[QUICKSTART.md](QUICKSTART.md)** - Quick start guide for end users
+-  **[USER_GUIDE.md](USER_GUIDE.md)** - Main documentation index for users
 
 ### Developer Documentation
-- 🤖 **[AI_MANUAL.md](AI_MANUAL.md)** - Complete API reference (CLI and REST) for AI assistants and bot developers
+-  **[AI_MANUAL.md](AI_MANUAL.md)** - Complete API reference (CLI and REST) for AI assistants and bot developers
   - Includes CLI commands and examples
   - Full REST API documentation
   - Authentication guide
   - Testing examples
 
 ### Administrator Documentation
-- 🛠️ **[ADMIN_GUIDE.md](ADMIN_GUIDE.md)** - Complete setup, deployment, and management guide
+-  **[ADMIN_GUIDE.md](ADMIN_GUIDE.md)** - Complete setup, deployment, and management guide
   - System prerequisites and installation
   - Configuration and running TaskPulse
   - Team system management
@@ -335,65 +339,19 @@ TaskPulse uses SQLite by default for simplicity. The database file is created au
   - Production deployment
   - Monitoring and maintenance
   - Troubleshooting guides
-- 📝 **[SCRIPTS.md](SCRIPTS.md)** - Quick reference for management scripts
+-  **[SCRIPTS.md](SCRIPTS.md)** - Quick reference for management scripts
 
 ### Additional Documentation
-- 📝 **[SUBTASK_TYPES_AND_FILES.md](SUBTASK_TYPES_AND_FILES.md)** - Subtask types and file tracking documentation
+-  **[SUBTASK_TYPES_AND_FILES.md](SUBTASK_TYPES_AND_FILES.md)** - Subtask types and file tracking documentation
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
-We welcome contributions! Here's how you can help:
+This project is provided for personal use. If it helped you you are always allowed to buy me a coffe when the GitHub Sponsor button is active.
 
-### Reporting Issues
 
-1. Check existing [GitHub Issues](https://github.com/najef1979-code/TaskPulse/issues)
-2. Create a new issue with:
-   - Clear title and description
-   - Steps to reproduce
-   - Expected vs actual behavior
-   - Environment details (OS, Node version, etc.)
-
-### Pull Requests
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-### Development Guidelines
-
-- Follow the existing code style
-- Write meaningful commit messages
-- Add tests for new features
-- Update documentation as needed
-- Ensure all tests pass before submitting
-
-### Setting Up Development Environment
-
-```bash
-# Clone your fork
-git clone https://github.com/YOUR_USERNAME/taskpulse.git
-cd taskpulse
-
-# Install dependencies
-cd server && npm install
-cd ../client && npm install
-
-# Run tests
-cd server && npm test
-cd ../client && npm test
-
-# Start development servers
-cd ..
-./taskpulse-runner.sh --no-test
-```
-
----
-
-## 🧪 Testing
+## Testing
 
 ### Run All Tests
 
@@ -441,14 +399,19 @@ curl -X POST http://localhost:3000/api/tasks \
 
 ### Production Deployment
 
+Single port deployment mode - both frontend and API served from port 3000.
+
 1. **Set Environment Variables**
    ```bash
    # server/.env
    NODE_ENV=production
    JWT_SECRET=<secure-random-string>
+   PORT=3000
+   CUSTOM_DOMAIN=https://yourdomain.com
    
    # client/.env
-   VITE_API_URL=https://yourdomain.com/api
+   VITE_API_URL=/api
+   NODE_ENV=production
    ```
 
 2. **Build Frontend**
@@ -458,16 +421,25 @@ curl -X POST http://localhost:3000/api/tasks \
    # Output in client/dist/
    ```
 
-3. **Deploy with PM2**
+3. **Deploy with PM2 (Single Port)**
    ```bash
-   pm2 start server/server.js --name "taskpulse-backend"
-   pm2 start "cd client && npm run dev" --name "taskpulse-frontend"
+   pm2 start server/server.js --name "taskpulse" --env production
    ```
 
-4. **Set Up Reverse Proxy (Nginx)**
-   - Configure Nginx to proxy to ports 3000 and 3050
+4. **Deploy with Systemd Service (Recommended)**
+   ```bash
+   sudo ./setup-service.sh
+   ```
+
+5. **Set Up Reverse Proxy (Nginx)**
+   - Configure Nginx to proxy to port 3000
    - Set up SSL/TLS with Let's Encrypt
    - See [ADMIN_GUIDE.md](ADMIN_GUIDE.md#deployment) for details
+
+**Access URLs:**
+- Local: http://localhost:3000
+- Network: http://192.168.2.128:3000
+- Domain: https://yourdomain.com
 
 ### Docker Deployment
 
@@ -559,7 +531,7 @@ docker-compose down
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
@@ -589,7 +561,7 @@ SOFTWARE.
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Built with [React](https://reactjs.org/)
 - Backend powered by [Express.js](https://expressjs.com/)
@@ -609,7 +581,7 @@ If you find TaskPulse helpful, please consider giving us a star on GitHub!
 
 <div align="center">
 
-**Built with ❤️ by the TaskPulse Team**
+**Built with with a purpose, shared with ❤️ by Najef Abu Ita to make Human and AI assistent interactions better and more efficient**
 
 [⬆ Back to Top](#-taskpulse)
 

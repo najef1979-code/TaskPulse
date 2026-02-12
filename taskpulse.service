@@ -1,0 +1,26 @@
+[Unit]
+Description=TaskPulse Service (Production Mode - Single Port)
+After=network.target
+
+[Service]
+Type=simple
+User=najef
+Group=najef
+WorkingDirectory=/home/najef/Projects/TaskPulse
+Environment="NODE_ENV=production"
+Environment="PATH=/home/najef/.nvm/versions/node/v24.11.0/bin:/usr/local/bin:/usr/bin:/bin"
+Environment="NVM_DIR=/home/najef/.nvm"
+ExecStart=/bin/bash /home/najef/Projects/TaskPulse/taskpulse-daemon.sh
+Restart=on-failure
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=taskpulse
+
+# Kill mode: only kill the main daemon, let it handle graceful shutdown
+KillMode=process
+# Give time for graceful shutdown
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target

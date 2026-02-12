@@ -148,7 +148,7 @@ const styles = {
     backgroundColor: '#f8fafc',
     border: '1px solid #e2e8f0',
     borderRadius: '6px',
-    fontSize: '13px',
+    font: '11px / normal 400 var(--font-family)',
     cursor: 'pointer',
     transition: 'all 0.2s',
     minWidth: '140px',
@@ -194,7 +194,7 @@ const styles = {
     textAlign: 'left',
     cursor: 'pointer',
     transition: 'background-color 0.2s',
-    fontSize: '14px',
+    font: '12px / normal 400 var(--font-family)',
   },
   optionSelected: {
     backgroundColor: '#eff6ff',

@@ -42,9 +42,9 @@ class AuthService {
 
     const db = await getDatabase();
     
-    // Check if user exists
+    // Check if user exists (case-insensitive for email)
     const existing = await db.get(
-      'SELECT id FROM users WHERE username = ? OR email = ?',
+      'SELECT id FROM users WHERE username = ? OR LOWER(email) = LOWER(?)',
       [username, email]
     );
     
@@ -52,18 +52,19 @@ class AuthService {
       throw new Error('Username or email already exists');
     }
 
-    // Create human user
+    // Create human user (store email in lowercase)
+    const emailLower = email.toLowerCase();
     const passwordHash = this.hashPassword(password);
     const result = await db.run(
       `INSERT INTO users (username, email, password_hash, full_name, user_type, is_active)
        VALUES (?, ?, ?, ?, 'human', 1)`,
-      [username, email, passwordHash, fullName || username]
+      [username, emailLower, passwordHash, fullName || username]
     );
 
     return { 
       id: result.lastID, 
       username, 
-      email, 
+      email: emailLower, 
       fullName: fullName || username,
       userType: 'human'
     };
@@ -72,9 +73,10 @@ class AuthService {
   async login(username, password) {
     const db = await getDatabase();
     
+    // Case-insensitive login for both username and email
     const user = await db.get(
       `SELECT * FROM users 
-       WHERE (username = ? OR email = ?) 
+       WHERE (LOWER(username) = LOWER(?) OR LOWER(email) = LOWER(?)) 
        AND user_type = 'human'
        AND is_active = 1`,
       [username, username]
@@ -395,8 +397,8 @@ class AuthService {
     return db.all(
       `SELECT id, username, email, full_name, user_type, is_active, created_at, last_login
        FROM users
-       WHERE is_active = 1 AND user_type = 'human'
-       ORDER BY created_at DESC`
+       WHERE is_active = 1
+       ORDER BY user_type ASC, created_at DESC`
     );
   }
 

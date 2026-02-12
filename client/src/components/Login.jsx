@@ -5,7 +5,7 @@ const ALLOW_REGISTRATION = import.meta.env.VITE_ALLOW_REGISTRATION === 'true';
 
 export function Login({ onSwitchToRegister }) {
   const { login } = useAuth();
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -16,7 +16,7 @@ export function Login({ onSwitchToRegister }) {
     setLoading(true);
 
     try {
-      await login(username, password);
+      await login(email, password);
       // Login successful, parent will handle redirect
     } catch (err) {
       setError(err.message || 'Login failed');
@@ -37,16 +37,15 @@ export function Login({ onSwitchToRegister }) {
 
         <form onSubmit={handleSubmit} style={styles.formInner}>
           <div style={styles.field}>
-            <label style={styles.label}>Username</label>
+            <label style={styles.label}>Email</label>
             <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               style={styles.input}
-              placeholder="Enter your username"
+              placeholder="Enter your email"
               required
             />
-            <span style={styles.hintText}>Username is case-sensitive</span>
           </div>
 
           <div style={styles.field}>
@@ -104,7 +103,7 @@ const styles = {
     marginBottom: '16px',
   },
   logo: {
-    maxWidth: '360px',
+    maxWidth: '221px',
     height: 'auto',
   },
   form: {

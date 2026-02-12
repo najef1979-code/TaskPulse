@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react';
 import { tasksApi } from '../services/api';
+import { useAuth } from './useAuth';
 
 export function useTasks(projectId) {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { user, loading: authLoading } = useAuth();
 
   const fetchTasks = async () => {
-    if (!projectId) {
+    // Don't fetch if not authenticated or no projectId
+    if (!user || !projectId) {
       setTasks([]);
       setLoading(false);
       return;
@@ -79,8 +82,11 @@ export function useTasks(projectId) {
   };
 
   useEffect(() => {
-    fetchTasks();
-  }, [projectId]);
+    // Wait for auth to complete before fetching tasks
+    if (!authLoading) {
+      fetchTasks();
+    }
+  }, [projectId, user, authLoading]);
 
   return {
     tasks,

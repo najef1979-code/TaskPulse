@@ -33,8 +33,10 @@ Choose the approach that best fits your use case:
 
 ### Base URLs
 - **API:** `http://localhost:3000`
-- **Web UI:** `http://localhost:3050`
+- **Web UI:** `http://localhost:3000`
 - **Health Check:** `http://localhost:3000/health`
+
+**Note:** In production mode (v1.1.0+), TaskPulse runs on a single port (3000) serving both web interface and API.
 
 ### API Documentation
 Full API reference available at: `http://localhost:3000/api`
@@ -44,7 +46,7 @@ TaskPulse uses hybrid authentication:
 - **Session-based:** For human users (cookie-based)
 - **Token-based:** For bots (API token in headers)
 
-### 🔒 Security for Online Deployments
+### Security for Online Deployments
 
 When TaskPulse is hosted online (production environment), administrators can configure IP-based access control:
 
@@ -1172,5 +1174,5 @@ def create_subtask(session_id, task_id, subtask_data):
 
 ---
 
-**TaskPulse API Version:** 1.0.5
-**Last Updated:** 2026-02-11
+**TaskPulse API Version:** 1.1.0
+**Last Updated:** 2026-02-12

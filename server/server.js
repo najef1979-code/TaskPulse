@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
@@ -17,6 +18,12 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Serve static files from React build (production mode)
+const clientDistPath = path.join(__dirname, '..', 'client', 'dist');
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(clientDistPath));
+}
+
 // Middleware - Dynamic CORS for any IP
 app.use(cors({
   origin: (origin, callback) => {
@@ -32,7 +39,17 @@ app.use(cors({
       /^http:\/\/172\.(1[6-9]|2\d|3[01])\.\d+\.\d+(:\d+)?$/,
     ];
     
-    const allowed = allowedPatterns.some(pattern => pattern.test(origin));
+    // Check if origin matches any pattern
+    let allowed = allowedPatterns.some(pattern => pattern.test(origin));
+    
+    // Check custom domain (simpler approach - direct string match)
+    const customDomain = process.env.CUSTOM_DOMAIN;
+    if (customDomain && !allowed) {
+      const domainName = customDomain.replace(/^https?:\/\//, '');
+      if (origin.includes(domainName)) {
+        allowed = true;
+      }
+    }
     
     if (allowed) {
       callback(null, true);
@@ -69,7 +86,7 @@ app.get('/api/skill.md', (req, res) => {
 app.get('/api', (req, res) => {
   res.json({
     name: 'TaskPulse API',
-  version: '1.0.5',
+  version: '1.1.0',
   authentication: 'Hybrid (session for humans, token for bots)',
     documentation: {
       'GET /api': 'API documentation',
@@ -159,11 +176,14 @@ app.post('/api/auth/login', async (req, res, next) => {
     // Update last_visit timestamp
     await authService.updateLastVisit(result.user.id);
     
+    // Check if request is coming over HTTPS (from proxy) or HTTP (direct)
+    const isSecure = req.secure || req.headers['x-forwarded-proto'] === 'https';
+    
     res.cookie('sessionId', result.sessionId, {
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
       sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production'
+      secure: isSecure
     });
 
     res.json({ 
@@ -918,6 +938,14 @@ app.use((err, req, res, next) => {
     message: process.env.NODE_ENV === 'development' ? err.message : undefined
   });
 });
+
+// Catch-all route for React SPA (in production)
+// This must be after all API routes
+if (process.env.NODE_ENV === 'production') {
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(clientDistPath, 'index.html'));
+  });
+}
 
 // 404 handler (should be last)
 app.use((req, res) => {

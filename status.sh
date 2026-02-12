@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # TaskPulse Status Script
-# Shows the status of both servers
+# Shows the status of the server (production mode - single port)
 
 # Colors
 RED='\033[0;31m'
@@ -10,55 +10,51 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-BACKEND_URL="http://localhost:3000"
-FRONTEND_URL="http://localhost:3050"
+SERVER_URL="http://localhost:3000"
 
 echo -e "${BLUE}======================================${NC}"
 echo -e "${BLUE}TaskPulse Server Status${NC}"
 echo -e "${BLUE}======================================${NC}\n"
 
-# Check backend
-echo -n "Backend (port 3000): "
-if curl -s "${BACKEND_URL}/health" > /dev/null 2>&1; then
+# Check server (production mode - serves both API and frontend)
+echo -n "TaskPulse (port 3000): "
+if curl -s "${SERVER_URL}/health" > /dev/null 2>&1; then
     echo -e "${GREEN}✓ RUNNING${NC}"
     echo -e "  Health: ${GREEN}OK${NC}"
-    echo "  URL: ${BACKEND_URL}"
-    echo "  API: ${BACKEND_URL}/api"
+    echo "  URL: ${SERVER_URL}"
+    echo "  API: ${SERVER_URL}/api"
+    
+    # Check if production mode (serves static files)
+    if curl -s "${SERVER_URL}/" | grep -q "TaskPulse\|Vite\|React"; then
+        echo -e "  Frontend: ${GREEN}Served from server (production mode)${NC}"
+    fi
 else
     echo -e "${RED}✗ NOT RUNNING${NC}"
-    echo "  Unable to connect to ${BACKEND_URL}"
+    echo "  Unable to connect to ${SERVER_URL}"
 fi
 
 echo ""
 
-# Check frontend
-echo -n "Frontend (port 3050): "
-if curl -s "${FRONTEND_URL}" > /dev/null 2>&1; then
-    echo -e "${GREEN}✓ RUNNING${NC}"
-    echo -e "  Health: ${GREEN}OK${NC}"
-    echo "  URL: ${FRONTEND_URL}"
-else
-    echo -e "${RED}✗ NOT RUNNING${NC}"
-    echo "  Unable to connect to ${FRONTEND_URL}"
-fi
-
-echo ""
-
-# Check if processes are running
+# Check if process is running
 echo "Process Status:"
-BACKEND_PID=$(lsof -ti:3000 2>/dev/null || true)
-FRONTEND_PID=$(lsof -ti:3050 2>/dev/null || true)
+SERVER_PID=$(lsof -ti:3000 2>/dev/null || true)
 
-if [ -n "$BACKEND_PID" ]; then
-    echo -e "  Backend PID: ${GREEN}$BACKEND_PID${NC}"
+if [ -n "$SERVER_PID" ]; then
+    echo -e "  Server PID: ${GREEN}$SERVER_PID${NC}"
 else
-    echo -e "  Backend PID: ${RED}Not found${NC}"
+    echo -e "  Server PID: ${RED}Not found${NC}"
 fi
 
-if [ -n "$FRONTEND_PID" ]; then
-    echo -e "  Frontend PID: ${GREEN}$FRONTEND_PID${NC}"
-else
-    echo -e "  Frontend PID: ${RED}Not found${NC}"
-fi
+# Check node processes
+echo ""
+echo "Node Processes:"
+pgrep -a node 2>/dev/null | head -5 || echo "  No node processes found"
 
+echo ""
+
+# Access URLs
+echo -e "${BLUE}Access URLs:${NC}"
+echo "  Local:    http://localhost:3000"
+echo "  Network:  http://192.168.2.128:3000"
+echo "  Domain:   https://taskpulse.ceraimic.eu"
 echo ""

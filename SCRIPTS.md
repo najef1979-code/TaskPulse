@@ -1,6 +1,7 @@
 # TaskPulse Management Scripts
 
-**Last Updated:** 2026-02-11
+**Last Updated:** 2026-02-12
+**Version:** 1.1.0 (Single Port Production Mode)
 
 > **Note:** Detailed administration and deployment information has been consolidated into the [Administration Guide](ADMIN_GUIDE.md). This file provides a quick reference for the available management scripts.
 
@@ -10,29 +11,37 @@
 
 ### Main Scripts
 
-- **`taskpulse-runner.sh`** - Start servers, health checks, and integration tests
-- **`stop-all.sh`** - Stop both backend and frontend servers
+- **`taskpulse-runner.sh`** - Start server, health checks, and integration tests
+- **`stop-all.sh`** - Stop TaskPulse server
 - **`status.sh`** - Check server status
-- **`restart-server.sh`** - Restart backend server
+- **`restart-server.sh`** - Restart TaskPulse server (production mode)
 - **`backup-db.sh`** - Backup the database
+- **`setup-service.sh`** - Install TaskPulse as systemd service
+- **`taskpulse-daemon.sh`** - Daemon script for systemd service
 
 ### Quick Usage
 
 ```bash
-# Start everything and run tests
+# Start server and run tests
 ./taskpulse-runner.sh
 
 # Start without tests (faster)
 ./taskpulse-runner.sh --no-test
 
-# Check if servers are running
+# Check if server is running
 ./status.sh
 
-# Stop all servers
+# Stop server
 ./stop-all.sh
 
-# Restart backend only
+# Restart server (production mode)
 ./restart-server.sh
+
+# Install as systemd service (requires sudo)
+sudo ./setup-service.sh
+
+# Check service status
+sudo systemctl status taskpulse
 ```
 
 ---
@@ -41,7 +50,7 @@
 
 ### taskpulse-runner.sh
 
-**Purpose:** Main startup script for TaskPulse
+**Purpose:** Main startup script for TaskPulse (production mode)
 
 **Usage:**
 ```bash
@@ -51,17 +60,16 @@
 ```
 
 **What it does:**
-1. Stops existing servers on ports 3000 and 3050
-2. Starts backend server on port 3000
-3. Starts frontend server on port 3050
-4. Performs health checks
-5. Runs integration tests (unless `--no-test` is used)
+1. Stops existing server on port 3000
+2. Starts server in production mode (serves both frontend and API from port 3000)
+3. Performs health checks
+4. Runs integration tests (unless `--no-test` is used)
 
 ---
 
 ### stop-all.sh
 
-**Purpose:** Stop all TaskPulse servers
+**Purpose:** Stop TaskPulse server
 
 **Usage:**
 ```bash
@@ -72,7 +80,7 @@
 
 ### status.sh
 
-**Purpose:** Check the status of TaskPulse servers
+**Purpose:** Check the status of TaskPulse server
 
 **Usage:**
 ```bash
@@ -85,12 +93,34 @@
 
 ### restart-server.sh
 
-**Purpose:** Restart the backend server with proper cleanup
+**Purpose:** Restart TaskPulse server in production mode
 
 **Usage:**
 ```bash
 ./restart-server.sh
 ```
+
+**What it does:**
+- Stops existing server on port 3000
+- Starts server in production mode
+- Shows access URLs
+
+---
+
+### setup-service.sh
+
+**Purpose:** Install TaskPulse as systemd service
+
+**Usage:**
+```bash
+sudo ./setup-service.sh
+```
+
+**What it does:**
+- Removes existing service (if present)
+- Installs TaskPulse as systemd service
+- Enables auto-start on boot
+- Starts the service immediately
 
 ---
 
@@ -162,19 +192,27 @@ See the [Administration Guide](ADMIN_GUIDE.md) for:
 ## Log Files
 
 The scripts use the following log files:
-- `server.log` - Backend server output
-- `client.log` - Frontend server output
+- `server.log` - Server output (production mode - serves both frontend and API)
 - `startup.log` - Combined startup and test logs
 
 ---
 
-## Port Configuration
+## Port Configuration (v1.1.0+)
 
-Default ports (can be changed in configuration):
+**Production Mode (default):**
+- **Single Port:** http://localhost:3000 (serves both frontend and API)
+- **Access URLs:**
+  - Local: http://localhost:3000
+  - Network: http://192.168.2.128:3000
+  - Domain: https://taskpulse.ceraimic.eu
+
+**Development Mode:**
 - **Backend API:** http://localhost:3000
 - **Frontend:** http://localhost:3050
 
+To switch modes, set `NODE_ENV=production` in `server/.env`
+
 ---
 
-**TaskPulse Version:** 1.0.5
-**Last Updated:** 2026-02-11
+**TaskPulse Version:** 1.1.0
+**Last Updated:** 2026-02-12

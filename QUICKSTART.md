@@ -25,8 +25,10 @@ TaskPulse is a modern task management application with:
 Open your web browser and navigate to:
 
 ```
-http://localhost:3050
+http://localhost:3000
 ```
+
+**Note:** In production mode (v1.1.0+), TaskPulse runs on a single port (3000) serving both the web interface and API.
 
 If TaskPulse isn't running, ask your administrator to start it.
 
@@ -44,7 +46,7 @@ That's it! You're ready to start creating tasks.
 
 ### 3. First Login
 
-1. Go to `http://localhost:3050`
+1. Go to `http://localhost:3000`
 2. Enter your username and password
 3. Click **"Login"**
 
@@ -215,6 +217,58 @@ Click the **"×"** next to a subtask to remove it.
 ### Overdue Tasks
 
 Tasks past their due date appear with a red warning indicator.
+
+---
+
+## File References
+
+### What are File References?
+
+File references let you track where task-related files are stored, whether they were emailed to you or stored on disk.
+
+### Adding a File Reference to a Task
+
+1. Click on a task to open details
+2. Find the **"File Reference"** section
+3. Click **"Edit"** button
+4. Select the file type:
+   - **No File** (default) - No file associated
+   - **Emailed** - File was sent via email
+   - **On Disk** - File is stored locally
+5. Based on your selection:
+   - **Emailed**: Enter the email subject (e.g., "Project Requirements Document")
+   - **On Disk**: Enter the file path (e.g., "/documents/requirements.pdf")
+6. Click **"Save"**
+
+### Viewing File References
+
+The file reference section shows:
+- **Icon**: 📧 for emailed files, 💾 for disk files
+- **Type**: Emailed or On Disk (displayed above the reference)
+- **Reference**: The email subject or file path you entered
+
+### Editing File References
+
+1. Click on the task
+2. Click **"Edit"** in the File Reference section
+3. Change the file type or reference
+4. Click **"Save"** to update or **"Cancel"** to discard changes
+
+### File References in Subtasks
+
+Subtasks also support file references! When creating a subtask:
+1. Open the task details
+2. In the **"Add Subtask"** section, find **"📁 File Reference"**
+3. Select file type (No File, Emailed, or On Disk)
+4. Enter the reference (email subject or file path)
+5. Create the subtask
+
+### When to Use File References
+
+✅ **Emailed files**: When important documents arrive in your inbox  
+✅ **On-disk files**: When you have local copies of documents  
+✅ **Tracking assets**: When you need to reference external resources  
+✅ **Collaboration**: When team members need to know where files are located
 
 ---
 
@@ -397,6 +451,6 @@ Now that you know the basics, try:
 
 ---
 
-**Last Updated:** 2026-02-08  
-**TaskPulse Version:** 1.0.5
+**Last Updated:** 2026-02-12  
+**TaskPulse Version:** 1.1.0
 **Purpose:** Quick Start Guide for End Users

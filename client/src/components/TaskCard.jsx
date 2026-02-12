@@ -591,9 +591,8 @@ const styles = {
   },
   description: {
     margin: '0 0 var(--spacing-md) 0',
-    fontSize: 'var(--body-medium)',
-    color: 'var(--color-text-secondary)',
-    lineHeight: '1.4',
+    fontSize: '12px',
+    color: '#64748b',
   },
   assignee: {
     display: 'inline-flex',
@@ -788,8 +787,8 @@ const styles = {
     marginTop: 'var(--spacing-md)',
   },
   date: {
-    fontSize: 'var(--label-small)',
-    color: 'var(--color-text-tertiary)',
+    fontSize: '12px',
+    color: '#64748b',
   },
   fileReference: {
     display: 'inline-flex',
