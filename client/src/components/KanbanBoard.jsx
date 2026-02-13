@@ -219,6 +219,7 @@ export function KanbanBoard({
                 subtasks={taskSubtasks?.[task.id] || []}
                 onSwipeLeft={() => handleTaskSwipeLeft(task.id)}
                 onSwipeRight={() => handleTaskSwipeRight(task.id)}
+                onRefreshSubtasks={onRefreshSubtasks}
               />
             ))}
             
@@ -372,6 +373,7 @@ export function KanbanBoard({
                     onClick={() => setSelectedTask(task)}
                     subtaskCount={taskSubtaskCounts?.[task.id] || 0}
                     subtasks={taskSubtasks?.[task.id] || []}
+                    onRefreshSubtasks={onRefreshSubtasks}
                   />
                 </div>
               ))}

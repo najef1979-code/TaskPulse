@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { tasksApi, subtasksApi } from '../services/api';
 import { AssignmentSelector } from './AssignmentSelector';
+import { EditSubtaskModal } from './EditSubtaskModal';
 import { formatDateLong, getDueDateColor, toISODate } from '../utils/dates';
 
 export function TaskModal({ task, onClose, onUpdate, onSave }) {
@@ -17,6 +18,7 @@ export function TaskModal({ task, onClose, onUpdate, onSave }) {
   const [newSubtaskProvidedFile, setNewSubtaskProvidedFile] = useState('no_file');
   const [newSubtaskFileReference, setNewSubtaskFileReference] = useState('');
   const [loadedTaskId, setLoadedTaskId] = useState(null);
+  const [editSubtask, setEditSubtask] = useState(null);
 
   const loadFullTask = useCallback(async () => {
     if (!task || !task.id) {
@@ -288,6 +290,12 @@ export function TaskModal({ task, onClose, onUpdate, onSave }) {
                                 }}
                                 disabled={subtask.answered}
                               />
+                              <button
+                                style={styles.editSubtaskButton}
+                                onClick={() => setEditSubtask(subtask)}
+                              >
+                                ✏️ Edit
+                              </button>
                             </div>
                           </div>
 
@@ -366,6 +374,12 @@ export function TaskModal({ task, onClose, onUpdate, onSave }) {
                                 }}
                                 disabled={subtask.answered}
                               />
+                              <button
+                                style={styles.editSubtaskButton}
+                                onClick={() => setEditSubtask(subtask)}
+                              >
+                                ✏️ Edit
+                              </button>
                             </div>
                           </div>
 
@@ -412,6 +426,18 @@ export function TaskModal({ task, onClose, onUpdate, onSave }) {
               );
             })()}
           </div>
+        )}
+
+        {editSubtask && (
+          <EditSubtaskModal
+            subtask={editSubtask}
+            onClose={() => setEditSubtask(null)}
+            onUpdate={() => {
+              setEditSubtask(null);
+              loadFullTask();
+              handleUpdate();
+            }}
+          />
         )}
 
         <div style={styles.newSubtaskForm}>
@@ -837,6 +863,19 @@ const styles = {
     fontWeight: '500',
     textTransform: 'uppercase',
     letterSpacing: '0.5px',
+  },
+  editSubtaskButton: {
+    padding: '4px 8px',
+    fontSize: '12px',
+    backgroundColor: 'var(--color-surface-3)',
+    color: 'var(--color-primary-60)',
+    border: '1px solid var(--color-outline)',
+    borderRadius: 'var(--radius-sm)',
+    cursor: 'pointer',
+    fontWeight: '500',
+    textTransform: 'uppercase',
+    letterSpacing: '0.5px',
+    transition: 'all var(--duration-short) var(--easing-standard)',
   },
   openAnswerContainer: {
     marginTop: 'var(--spacing-sm)',

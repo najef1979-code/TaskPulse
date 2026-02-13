@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { PRIORITIES } from '../utils/priorities';
 import { formatDate, getDueDateBgColor, getDueDateColor, isOverdue, getDueDateBadge } from '../utils/dates';
 import { subtasksApi } from '../services/api';
+import { CreateSubtaskModal } from './CreateSubtaskModal';
 
 export function TaskCard({ 
   task, 
@@ -13,12 +14,14 @@ export function TaskCard({
   subtaskCount,
   subtasks,
   onSwipeLeft,
-  onSwipeRight
+  onSwipeRight,
+  onRefreshSubtasks
 }) {
   const [showInlineSubtasks, setShowInlineSubtasks] = useState(false);
   const [localSubtasks, setLocalSubtasks] = useState(subtasks || []);
   const [loadingSubtasks, setLoadingSubtasks] = useState(false);
   const [answeringSubtask, setAnsweringSubtask] = useState(null);
+  const [showCreateSubtaskModal, setShowCreateSubtaskModal] = useState(false);
   
   // Swipe gesture state for delete (existing functionality)
   const [isDeleting, setIsDeleting] = useState(false);
@@ -310,6 +313,17 @@ export function TaskCard({
         </div>
       )}
 
+      {/* Create subtask button */}
+      <button
+        style={styles.createSubtaskButton}
+        onClick={(e) => {
+          e.stopPropagation();
+          setShowCreateSubtaskModal(true);
+        }}
+      >
+        + Add Subtask
+      </button>
+
       {/* Inline subtasks section */}
       {showInlineSubtasks && (
         <div style={styles.inlineSubtasks} onClick={(e) => e.stopPropagation()}>
@@ -438,6 +452,19 @@ export function TaskCard({
           }
         </span>
       </div>
+
+      {/* Create Subtask Modal */}
+      {showCreateSubtaskModal && (
+        <CreateSubtaskModal
+          taskId={task.id}
+          onClose={() => setShowCreateSubtaskModal(false)}
+          onCreate={() => {
+            setShowCreateSubtaskModal(false);
+            handleLoadSubtasks();
+            if (onRefreshSubtasks) onRefreshSubtasks(task.id);
+          }}
+        />
+      )}
     </div>
   );
 }
@@ -660,6 +687,19 @@ const styles = {
     gap: '8px',
     transition: 'all var(--duration-short) var(--easing-standard)',
     textTransform: 'capitalize',
+  },
+  createSubtaskButton: {
+    padding: '8px 12px',
+    backgroundColor: '#dcfce7',
+    color: '#14532d',
+    borderRadius: '6px',
+    fontSize: '14px',
+    fontWeight: '600',
+    cursor: 'pointer',
+    marginTop: 'var(--spacing-sm)',
+    border: 'none',
+    transition: 'all var(--duration-short) var(--easing-standard)',
+    width: '100%',
   },
   subtaskSection: {
     marginBottom: '16px',
