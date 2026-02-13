@@ -1,8 +1,8 @@
 # ⚡ TaskPulse
 
-**A modern, feature-rich task management application with Kanban boards, AI-powered insights, and progressive web app support.**
+**A modern, feature-rich task management application with Kanban boards to assist human and AI Assistent Project progress.**
 
-![TaskPulse](https://img.shields.io/badge/version-2.0.0-blue)
+![TaskPulse](https://img.shields.io/badge/version-v1.2.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Node](https://img.shields.io/badge/node-%3E%3D16.0.0-brightgreen)
 ![React](https://img.shields.io/badge/react-18.2.0-blue)
@@ -10,41 +10,42 @@
 
 ---
 
-## 🌟 What is TaskPulse?
+## What is TaskPulse?
 
-TaskPulse is a Project Management system for Humans and their AI assistents. It combines the simplicity of a Kanban board with powerful features like AI-powered task suggestions, mobile-first design, and offline support.
-It solves the problem that tasks are not being done because it needs its human to provide feedback. With TaskPulse the AI can maintain Projects, Tasks that belong to that Project and Subtask that contain Multiple Choice Questions or Open Questions.  Tasks and Subtasks can be assigned to the Human so they know their feedback is required.
+Taskpulse is a Project Management system that helps you know and understand the progress your AI Assistent is maling on your shared Project and Project tasks. It's build to give you insights what Tasks the AI Assistent is not able
+to complete without your input. The AI Assistent can create Projects, Tasks and subtast and even assign you to them when you need to complete something before it can continue.
+
 
 **Built with:** React, Node.js, Express, and SQLite  
 **Perfect for:** Development teams, project managers, freelancers, and anyone who needs to organize their work efficiently.
 
 ---
 
-## ✨ Key Features
+## Key Features
 
-### 🆕 New in v2.0
+### New in v1.2.0
 
-#### 🤖 **AI Assistant Integration**
+#### **AI Assistant Integration**
 - **API Skill File** - AI assistants can download `GET /api/skill.md` to learn TaskPulse API
 - **Smart Task Creation** - AI can create projects, tasks, and subtasks programmatically
 - **Automated Workflows** - Bots handle routine task management operations
 - **Decision Support** - Subtasks capture AI-driven decisions (multiple choice or open questions)
 - **File Reference Tracking** - Track emailed and on-disk files for AI workflows
 
-#### 👥 **Team-Based System**
+#### **Team-Based System**
 - **Team Isolation** - Each team has its own projects and tasks
 - **Team Admin** - Admin users can manage team members
 - **Join Requests** - Request to join teams with approval workflow
 - **Data Migration** - Seamless migration from personal to team-based work
 
-#### 🔐 **Bot API & Permissions**
+#### **Bot API & Permissions**
 - **Bot Creation** - Create API bots with custom permissions
 - **Granular Permissions** - Fine-tuned access control (read, create, update, delete)
 - **Token Authentication** - Secure API tokens for programmatic access
 - **Bot Management** - CLI tools for bot lifecycle management
 - **Activity Tracking** - Track bot actions in activity log
 
-### 📋 Visual Task Management
+### Visual Task Management
 - **Kanban Board** - Drag and drop tasks between columns (To Do, In Progress, Done)
 - **Task Cards** - Rich cards with priority badges, due dates, and assignees
 - **Subtasks** - Break down complex tasks into manageable pieces
@@ -54,32 +55,25 @@ It solves the problem that tasks are not being done because it needs its human t
 - **Priority Levels** - Low, Medium, High, and Critical with color coding
 - **Task Assignment** - Assign tasks to team members for collaboration
 
-### 🤖 AI-Powered Insights
-- **Smart Suggestions** - AI-powered task recommendations based on your workflow
-- **Automated Assignments** - Intelligent task assignment suggestions
-- **Priority Recommendations** - AI helps you prioritize your workload
-- **API-Ready** - Complete API for AI assistant integration
-
-### 📱 Mobile-First Design
+### Mobile-First Design
 - **Responsive UI** - Works perfectly on desktop, tablet, and mobile
 - **Touch Gestures** - Swipe to move tasks, tap to edit
 - **PWA Support** - Install as a mobile app (iOS, Android, Desktop)
 - **Offline Mode** - Continue working without internet connection
 
-### 🔒 Security & Authentication
+### Security & Authentication
 - **User Accounts** - Secure session-based authentication
 - **Bot API** - Create API bots with granular permissions
 - **Token-Based Auth** - For programmatic access and integrations
 - **Permission System** - Fine-grained access control
-- **Whitelisted Bot Access** - When hosted online, restrict API access to specific IPs for known bots while allowing human users from anywhere
 
-### 🚀 Developer-Friendly
+### Developer-Friendly
 - **REST API** - Full API for integrations and automation
 - **Bot SDKs** - Easy bot creation for CI/CD workflows
 - **Webhooks Ready** - Architecture supports webhook integrations
 - **Comprehensive Docs** - API reference, admin guide, and quick start
 
-### 🎯 Productivity Boosters
+### Productivity Boosters
 - **Due Dates** - Never miss a deadline with visual indicators
 - **Task Assignments** - Delegate work to team members
 - **Completion Tracking** - Automatic timestamps when tasks are completed
@@ -89,7 +83,7 @@ It solves the problem that tasks are not being done because it needs its human t
 
 ---
 
-## 💡 Why Use TaskPulse?
+## Why Use TaskPulse?
 
 ### For Teams
 - **Collaboration Made Easy** - Assign tasks, track progress, and coordinate work
@@ -127,7 +121,7 @@ It solves the problem that tasks are not being done because it needs its human t
 ## 📸 Screenshots
 
 ### Login Screen
-<img src="https://github.com/najef1979-code/TaskPulse/blob/main/TaskPulse-Login.png?raw=true" alt="TaskPulse Login Screen" width="800"/>
+<img src="https://github.com/najef1979-code/TaskPulse/blob/main/TaskPulse-Login.png?raw=true" alt="TaskPulse Login Screen" width="250"/>
 
 *Clean, modern login interface with optional registration link*
 
@@ -143,7 +137,7 @@ It solves the problem that tasks are not being done because it needs its human t
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -219,7 +213,7 @@ npm run dev
 
 ---
 
-## 📖 Usage Guide
+## Usage Guide
 
 ### First Steps
 
@@ -267,7 +261,7 @@ Use bots for:
 
 ---
 
-## 🔧 Configuration
+## Configuration
 
 ### Environment Variables
 
@@ -317,21 +311,21 @@ TaskPulse uses SQLite by default for simplicity. The database file is created au
 
 ---
 
-## 📚 Documentation
+## Documentation
 
 ### User Documentation
-- 📖 **[QUICKSTART.md](QUICKSTART.md)** - Quick start guide for end users
-- 📜 **[USER_GUIDE.md](USER_GUIDE.md)** - Main documentation index for users
+- **[QUICKSTART.md](QUICKSTART.md)** - Quick start guide for end users
+- **[USER_GUIDE.md](USER_GUIDE.md)** - Main documentation index for users
 
 ### Developer Documentation
-- 🤖 **[AI_MANUAL.md](AI_MANUAL.md)** - Complete API reference (CLI and REST) for AI assistants and bot developers
+-  **[AI_MANUAL.md](AI_MANUAL.md)** - Complete API reference (CLI and REST) for AI assistants and bot developers
   - Includes CLI commands and examples
   - Full REST API documentation
   - Authentication guide
   - Testing examples
 
 ### Administrator Documentation
-- 🛠️ **[ADMIN_GUIDE.md](ADMIN_GUIDE.md)** - Complete setup, deployment, and management guide
+-  **[ADMIN_GUIDE.md](ADMIN_GUIDE.md)** - Complete setup, deployment, and management guide
   - System prerequisites and installation
   - Configuration and running TaskPulse
   - Team system management
@@ -340,14 +334,14 @@ TaskPulse uses SQLite by default for simplicity. The database file is created au
   - Production deployment
   - Monitoring and maintenance
   - Troubleshooting guides
-- 📝 **[SCRIPTS.md](SCRIPTS.md)** - Quick reference for management scripts
+-  **[SCRIPTS.md](SCRIPTS.md)** - Quick reference for management scripts
 
 ### Additional Documentation
-- 📝 **[SUBTASK_TYPES_AND_FILES.md](SUBTASK_TYPES_AND_FILES.md)** - Subtask types and file tracking documentation
+-  **[SUBTASK_TYPES_AND_FILES.md](SUBTASK_TYPES_AND_FILES.md)** - Subtask types and file tracking documentation
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions! Here's how you can help:
 
@@ -442,7 +436,7 @@ curl -X POST http://localhost:3000/api/tasks \
 
 ---
 
-## 🚢 Deployment
+##  Deployment
 
 ### Production Deployment
 
@@ -489,7 +483,7 @@ docker-compose down
 
 ---
 
-## 🔒 Security
+##  Security
 
 ### Security Best Practices
 
@@ -517,7 +511,7 @@ docker-compose down
 
 ---
 
-## 📊 Performance
+##  Performance
 
 ### Performance Targets
 
@@ -539,14 +533,11 @@ docker-compose down
 
 ---
 
-## 🛣️ Roadmap
+##  Roadmap
 
 ### Upcoming Features
 
-- [ ] **Webhooks** - Event-driven integrations
-- [ ] **Real-time Collaboration** - WebSocket support
 - [ ] **Advanced Analytics** - Charts and reports
-- [ ] **Time Tracking** - Track time spent on tasks
 - [ ] **File Attachments** - Upload files to tasks
 - [ ] **Comments** - Discussion threads on tasks
 - [ ] **Tags/Labels** - Better categorization
@@ -557,14 +548,12 @@ docker-compose down
 ### Long-term Vision
 
 - [ ] **Mobile Apps** - Native iOS and Android apps
-- [ ] **Team Workspaces** - Multi-tenant support
 - [ ] **Calendar View** - Alternative task visualization
 - [ ] **Gantt Charts** - Project timeline view
-- [ ] **Plugin System** - Extensible architecture
 
 ---
 
-## 📄 License
+##  License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
@@ -594,7 +583,7 @@ SOFTWARE.
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Built with [React](https://reactjs.org/)
 - Backend powered by [Express.js](https://expressjs.com/)
@@ -604,18 +593,19 @@ SOFTWARE.
 
 ---
 
-## 📞 Support
+##  Support
 
 - **Documentation:** [USER_GUIDE.md](USER_GUIDE.md)
 - **Issues:** [GitHub Issues](https://github.com/najef1979-code/TaskPulse/issues)
 - **Discussions:** [GitHub Discussions](https://github.com/najef1979-code/TaskPulse/discussions)
-- **Email:** support@taskpulse.dev (if available)
+
 
 ---
 
 ## ⭐ Star History
 
-If you find TaskPulse helpful, please consider giving us a star on GitHub!
+If you like TaskPulse, please consider giving us a star on GitHub!
+And if you find it helpfull please considere to buy me a coffee using the GitHub sponsor button.
 
 [![Star History Chart](https://api.star-history.com/svg?repos=najef1979-code/TaskPulse&type=Date)](https://star-history.com/#najef1979-code/TaskPulse&Date)
 
@@ -623,7 +613,12 @@ If you find TaskPulse helpful, please consider giving us a star on GitHub!
 
 <div align="center">
 
-**Built with ❤️ by the TaskPulse Team**
+** Build to help you get the most out of your AI assistent or other type of working relationship. **
+** We hope that it helps make your interactions more efficient **
+
+
+**TaskPulse Version:** v1.2.0  
+**Last Updated:** 2026-02-13
 
 [⬆ Back to Top](#-taskpulse)
 

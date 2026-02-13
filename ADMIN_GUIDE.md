@@ -1,6 +1,8 @@
 # TaskPulse Administration Guide
 
-**Last Updated:** 2026-02-11
+**TaskPulse Version:** v1.2.0  
+**Admin Guide Version:** v1.2.0  
+**Last Updated:** 2026-02-13
 
 This guide provides complete setup, deployment, and management instructions for TaskPulse administrators and developers.
 
@@ -986,7 +988,3 @@ For additional help:
 5. Create an issue on [GitHub](https://github.com/najef1979-code/TaskPulse/issues)
 
 ---
-
-**TaskPulse Version:** 2.0.0  
-**Admin Guide Version:** 2.0.0  
-**Last Updated:** 2026-02-11

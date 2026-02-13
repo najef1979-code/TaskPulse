@@ -2,7 +2,6 @@
 
 Welcome to TaskPulse! This guide will help you get started quickly with the web interface.
 
----
 
 ## What is TaskPulse?
 
@@ -14,9 +13,7 @@ TaskPulse is a modern task management application with:
 - ✅ **Subtasks** - Break down complex tasks
 - ✅ **Mobile App** - Works on phones and tablets
 - ✅ **Offline Mode** - Keep working without internet
-- ✅ **AI Suggestions** - Smart task recommendations
 
----
 
 ## Getting Started
 
@@ -24,7 +21,7 @@ TaskPulse is a modern task management application with:
 
 Open your web browser and navigate to:
 
-```
+...
 http://localhost:3050
 ```
 
@@ -80,13 +77,13 @@ Your project will appear in the left sidebar. Click it to view your Kanban board
 
 Your Kanban board has three columns:
 
-### 📋 To Do
+### To Do
 Tasks that haven't been started yet
 
-### 🔄 In Progress
+### In Progress
 Tasks you're currently working on
 
-### ✅ Done
+### Done
 Completed tasks
 
 **Tip:** Drag and drop tasks between columns to change their status!
@@ -397,6 +394,6 @@ Now that you know the basics, try:
 
 ---
 
-**Last Updated:** 2026-02-08  
-**TaskPulse Version:** 2.0.0  
+**Last Updated:** 2026-02-13  
+**TaskPulse Version:** v1.2.0  
 **Purpose:** Quick Start Guide for End Users

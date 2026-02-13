@@ -1,8 +1,11 @@
 # TaskPulse Documentation
 
+**TaskPulse Version:** v1.2.0  
+**Last Updated:** 2026-02-13
+
 Please use to following guides:
 
-## 📚 Documentation Index
+## Documentation Index
 
 ### For Everyone
 **[README.md](README.md)** - Project overview, features, and installation
@@ -55,7 +58,7 @@ Please use to following guides:
 | Administrator / Developer | [ADMIN_GUIDE.md](ADMIN_GUIDE.md) |
 | Power User / Need All Info | [Admin Guide](ADMIN_GUIDE.md) + [Quick Start](QUICKSTART.md) |
 
-### 🔒 Key Security Feature
+### Key Security Feature
 
 **Whitelisted Bot Access:** When TaskPulse is hosted online, the API can be configured to only allow connections from whitelisted IP addresses for known bots, while human users can access the interface from anywhere. This provides:
 - Secure bot integration - Only known, trusted bots can access the API
@@ -84,13 +87,8 @@ http://localhost:3050
 
 ## Quick Links
 
-- 🤖 **Web UI:** http://localhost:3050
-- 🔌 **API:** http://localhost:3000/api
-- 📊 **API Docs:** http://localhost:3000/api
-- 💚 **Health Check:** http://localhost:3000/health
-- 🛠️ **Status Check:** `./status.sh` (from project root)
-
-
-
-**TaskPulse Version:** 2.0.0  
-**Last Updated:** 2026-02-11
+- **Web UI:** http://localhost:3050
+- **API:** http://localhost:3000/api
+- **API Docs:** http://localhost:3000/api
+- **Health Check:** http://localhost:3000/health
+- **Status Check:** `./status.sh` (from project root)

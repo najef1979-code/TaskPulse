@@ -299,7 +299,9 @@ async function handleProject(subcommand, args, user) {
       }
 
       const projectData = {
+        teamId: user.teamId,
         ownerId: user.ownerId || user.id,
+        createdBy: user.id,
         name,
         description: flags.description || ''
       };
@@ -435,12 +437,16 @@ async function handleTask(subcommand, args, user) {
       }
 
       const taskData = {
+        teamId: user.teamId,
         ownerId: user.ownerId || user.id,
         projectId: parseInt(projectId),
         title,
         description: flags.description || '',
         priority: flags.priority || 'medium',
-        status: flags.status || 'pending'
+        status: flags.status || 'pending',
+        createdBy: user.id,
+        actorId: user.id,
+        actorType: user.userType
       };
 
       const task = await taskService.createTask(taskData);
@@ -509,7 +515,7 @@ async function handleTask(subcommand, args, user) {
         throw new Error('Task ID is required');
       }
 
-      const task = await taskService.startTask(id);
+      const task = await taskService.startTask(id, user.id, user.userType);
       output({
         success: true,
         message: 'Task started',
@@ -526,7 +532,7 @@ async function handleTask(subcommand, args, user) {
         throw new Error('Task ID is required');
       }
 
-      const task = await taskService.completeTask(id);
+      const task = await taskService.completeTask(id, user.id, user.userType);
       output({
         success: true,
         message: 'Task completed',
@@ -542,7 +548,7 @@ async function handleTask(subcommand, args, user) {
         throw new Error('Task ID is required');
       }
 
-      const task = await taskService.reopenTask(id);
+      const task = await taskService.reopenTask(id, user.id, user.userType);
       output({
         success: true,
         message: 'Task reopened',
@@ -558,7 +564,7 @@ async function handleTask(subcommand, args, user) {
         throw new Error('Task ID is required');
       }
 
-      await taskService.deleteTask(id);
+      await taskService.deleteTask(id, user.id, user.userType);
       output({
         success: true,
         message: 'Task deleted',
@@ -606,7 +612,12 @@ async function handleSubtask(subcommand, args, user) {
       const subtaskData = {
         taskId: parseInt(taskId),
         question,
-        options
+        options,
+        actorId: user.id,
+        actorType: user.userType,
+        type: 'multiple_choice',
+        providedFile: 'no_file',
+        fileReference: null
       };
 
       const subtask = await subtaskService.createSubtask(subtaskData);
@@ -639,7 +650,7 @@ async function handleSubtask(subcommand, args, user) {
         throw new Error('Subtask ID and selected option are required');
       }
 
-      const subtask = await subtaskService.answerSubtask(parseInt(id), selectedOption);
+      const subtask = await subtaskService.answerSubtask(parseInt(id), selectedOption, user.id, user.userType);
       output({
         success: true,
         message: 'Subtask answered',
@@ -665,7 +676,7 @@ async function handleSubtask(subcommand, args, user) {
         throw new Error('At least one field to update is required');
       }
 
-      const subtask = await subtaskService.updateSubtask(id, updates);
+      const subtask = await subtaskService.updateSubtask(id, updates, user.id, user.userType);
       output({
         success: true,
         message: 'Subtask updated',
@@ -681,7 +692,7 @@ async function handleSubtask(subcommand, args, user) {
         throw new Error('Subtask ID is required');
       }
 
-      await subtaskService.deleteSubtask(id);
+      await subtaskService.deleteSubtask(id, user.id, user.userType);
       output({
         success: true,
         message: 'Subtask deleted',

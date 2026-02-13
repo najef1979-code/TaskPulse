@@ -1,6 +1,7 @@
 # TaskPulse Management Scripts
 
-**Last Updated:** 2026-02-11
+**TaskPulse Version:** v1.2.0  
+**Last Updated:** 2026-02-13
 
 > **Note:** Detailed administration and deployment information has been consolidated into the [Administration Guide](ADMIN_GUIDE.md). This file provides a quick reference for the available management scripts.
 
@@ -174,7 +175,3 @@ Default ports (can be changed in configuration):
 - **Backend API:** http://localhost:3000
 - **Frontend:** http://localhost:3050
 
----
-
-**TaskPulse Version:** 2.0.0  
-**Last Updated:** 2026-02-11

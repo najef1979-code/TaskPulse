@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
+import { useAuth } from './useAuth';
 import { projectsApi } from '../services/api';
 
 export function useProjects() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { isAuthenticated } = useAuth();
 
   const fetchProjects = async () => {
     try {
@@ -41,8 +43,10 @@ export function useProjects() {
   };
 
   useEffect(() => {
-    fetchProjects();
-  }, []);
+    if (isAuthenticated) {
+      fetchProjects();
+    }
+  }, [isAuthenticated]);
 
   return {
     projects,

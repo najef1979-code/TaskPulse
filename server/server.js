@@ -25,11 +25,13 @@ app.use(cors({
     
     // Allow localhost and network IPs
     const allowedPatterns = [
-      /^http:\/\/localhost(:\d+)?$/,
-      /^http:\/\/127\.0\.0\.1(:\d+)?$/,
-      /^http:\/\/192\.168\.\d+\.\d+(:\d+)?$/,
-      /^http:\/\/10\.\d+\.\d+\.\d+(:\d+)?$/,
-      /^http:\/\/172\.(1[6-9]|2\d|3[01])\.\d+\.\d+(:\d+)?$/,
+      /^https?:\/\/localhost(:\d+)?$/,
+      /^https?:\/\/127\.0\.0\.1(:\d+)?$/,
+      /^https?:\/\/192\.168\.\d+\.\d+(:\d+)?$/,
+      /^https?:\/\/10\.\d+\.\d+\.\d+(:\d+)?$/,
+      /^https?:\/\/172\.(1[6-9]|2\d|3[01])\.\d+\.\d+(:\d+)?$/,
+      /^https:\/\/taskpulse\.ceraimic\.eu$/,
+      /^https:\/\/TaskPAPI\.ceraimic\.eu$/,
     ];
     
     const allowed = allowedPatterns.some(pattern => pattern.test(origin));
@@ -46,6 +48,18 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
+// Helper function to get environment-aware cookie options
+function getCookieOptions(req, additionalOptions = {}) {
+  const isExternal = req.get('host')?.includes('ceraimic.eu');
+  return {
+    httpOnly: true,
+    secure: isExternal,
+    sameSite: isExternal ? 'none' : 'lax',
+    domain: isExternal ? '.ceraimic.eu' : undefined,
+    ...additionalOptions
+  };
+}
+
 // Request logging middleware
 app.use((req, res, next) => {
   const user = req.user ? `(${req.user.userType}: ${req.user.username})` : '';
@@ -56,6 +70,20 @@ app.use((req, res, next) => {
 // Health check endpoint (no auth required)
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// Root endpoint - API information
+app.get('/', (req, res) => {
+  res.json({
+    name: 'TaskPulse',
+    description: 'TaskPulse API Server',
+    version: '2.0.0',
+    endpoints: {
+      health: '/health',
+      api: '/api',
+      documentation: '/api'
+    }
+  });
 });
 
 // Skill file endpoint (no auth required) - For AI assistants
@@ -159,12 +187,9 @@ app.post('/api/auth/login', async (req, res, next) => {
     // Update last_visit timestamp
     await authService.updateLastVisit(result.user.id);
     
-    res.cookie('sessionId', result.sessionId, {
-      httpOnly: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production'
-    });
+    res.cookie('sessionId', result.sessionId, getCookieOptions(req, {
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    }));
 
     res.json({ 
       success: true, 
@@ -183,7 +208,7 @@ app.post('/api/auth/logout', requireAuth, async (req, res, next) => {
     if (sessionId) {
       await authService.logout(sessionId);
     }
-    res.clearCookie('sessionId');
+    res.clearCookie('sessionId', getCookieOptions(req));
     res.json({ success: true });
   } catch (error) {
     next(error);

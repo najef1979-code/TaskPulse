@@ -40,6 +40,23 @@ function AppContent() {
   const [currentView, setCurrentView] = useState('home'); // 'home', 'assignments', or 'unassigned'
   const [highlightedAssignment, setHighlightedAssignment] = useState(null);
 
+  // Function to refresh subtasks for a specific task
+  const refreshSubtasksForTask = async (taskId) => {
+    try {
+      const data = await tasksApi.getFull(taskId);
+      setTaskSubtasks(prev => ({
+        ...prev,
+        [taskId]: data.subtasks || []
+      }));
+      setTaskSubtaskCounts(prev => ({
+        ...prev,
+        [taskId]: data.subtasks ? data.subtasks.length : 0
+      }));
+    } catch (err) {
+      console.error(`Failed to refresh subtasks for task ${taskId}:`, err);
+    }
+  };
+
   // Fetch subtasks for tasks - single fetch, no N+1 problem
   useEffect(() => {
     if (tasks.length > 0) {
@@ -279,6 +296,7 @@ function AppContent() {
               onAssignTask={assignTask}
               taskSubtaskCounts={taskSubtaskCounts}
               taskSubtasks={taskSubtasks}
+              onRefreshSubtasks={refreshSubtasksForTask}
               isMobile={isMobile}
             />
           )}

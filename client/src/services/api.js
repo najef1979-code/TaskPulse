@@ -1,4 +1,20 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+// Detect environment and set appropriate backend URL
+// Use environment variables with fallbacks for flexibility
+const externalDomain = import.meta.env.VITE_EXTERNAL_DOMAIN || 'taskpulse.ceraimic.eu';
+const localIp = import.meta.env.VITE_LOCAL_IP || 'localhost';
+
+// Determine if we're accessing from external domain or local network
+const isExternal = window.location.hostname === externalDomain;
+
+// Set backend URL based on environment detection
+// External: https://TaskPAPI.{domain} (replaces taskpulse with ceraimic in domain)
+// Local: http://{localIp}:3000
+const backendUrl = isExternal 
+  ? `https://TaskPAPI.${externalDomain.replace('taskpulse', 'ceraimic')}`
+  : `http://${localIp}:3000`;
+
+// Allow manual override via VITE_API_URL (optional)
+const API_URL = import.meta.env.VITE_API_URL || `${backendUrl}/api`;
 
 // Store a logout handler for auth errors
 let logoutHandler = null;

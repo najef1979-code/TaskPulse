@@ -6,18 +6,23 @@ export function ProjectSelector({ projects, selectedProject, onSelectProject, on
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [isCreating, setIsCreating] = useState(false);
+  const [deletingProjectId, setDeletingProjectId] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!name.trim()) return;
 
     try {
+      setIsCreating(true);
       await onCreateProject({ name, description });
       setName('');
       setDescription('');
       setShowForm(false);
     } catch (err) {
       alert('Failed to create project: ' + err.message);
+    } finally {
+      setIsCreating(false);
     }
   };
 
@@ -39,9 +44,12 @@ export function ProjectSelector({ projects, selectedProject, onSelectProject, on
     }
 
     try {
+      setDeletingProjectId(project.id);
       await onDeleteProject(project.id);
     } catch (err) {
       alert('Failed to delete project: ' + err.message);
+    } finally {
+      setDeletingProjectId(null);
     }
   };
 
@@ -81,8 +89,12 @@ export function ProjectSelector({ projects, selectedProject, onSelectProject, on
             onChange={(e) => setDescription(e.target.value)}
             style={isMobile ? styles.mobileTextarea : styles.textarea}
           />
-          <button type="submit" style={isMobile ? styles.mobileSubmitButton : styles.submitButton}>
-            Create Project
+          <button 
+            type="submit" 
+            style={isMobile ? styles.mobileSubmitButton : styles.submitButton}
+            disabled={isCreating}
+          >
+            {isCreating ? 'Creating...' : 'Create Project'}
           </button>
           {isMobile && (
             <button 
@@ -144,8 +156,9 @@ export function ProjectSelector({ projects, selectedProject, onSelectProject, on
                 style={isMobile ? styles.mobileDeleteButton : styles.deleteButton}
                 onClick={(e) => handleDeleteProject(e, project)}
                 title="Delete project"
+                disabled={deletingProjectId === project.id}
               >
-                🗑️
+                {deletingProjectId === project.id ? '⏳' : '🗑️'}
               </button>
             </div>
           ))
