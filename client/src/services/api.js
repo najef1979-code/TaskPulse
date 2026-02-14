@@ -7,10 +7,11 @@ const localIp = import.meta.env.VITE_LOCAL_IP || 'localhost';
 const isExternal = window.location.hostname === externalDomain;
 
 // Set backend URL based on environment detection
-// External: https://TaskPAPI.{domain} (replaces taskpulse with ceraimic in domain)
+// External: https://TaskPAPI.{domain} (replaces subdomain with TaskPAPI)
+// Example: taskpulse.ceraimic.eu → TaskPAPI.ceraimic.eu
 // Local: http://{localIp}:3000
 const backendUrl = isExternal 
-  ? `https://TaskPAPI.${externalDomain.replace('taskpulse', 'ceraimic')}`
+  ? `https://TaskPAPI.${externalDomain.split('.').slice(1).join('.')}`
   : `http://${localIp}:3000`;
 
 // Allow manual override via VITE_API_URL (optional)

@@ -137,29 +137,23 @@ export function ProjectSelector({ projects, selectedProject, onSelectProject, on
                   (isMobile ? styles.mobileProjectItemActive : styles.projectItemActive) : 
                   {})
               }}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onSelectProject(project);
+              }}
+              role="button"
+              tabIndex={0}
             >
-              <div 
-                style={styles.projectContent}
-                onClick={() => onSelectProject(project)}
-              >
-                <div style={isMobile ? styles.mobileProjectName : styles.projectName}>
-                  {!isMobile && <img src="/ProjectIcon.png" alt="" style={styles.projectIcon} />}
-                  {project.name}
-                </div>
-                {project.description && (
-                  <div style={isMobile ? styles.mobileProjectDesc : styles.projectDesc}>
-                    {project.description}
-                  </div>
-                )}
+              <div style={isMobile ? styles.mobileProjectName : styles.projectName}>
+                {!isMobile && <img src="/ProjectIcon.png" alt="" style={styles.projectIcon} />}
+                {project.name}
               </div>
-              <button
-                style={isMobile ? styles.mobileDeleteButton : styles.deleteButton}
-                onClick={(e) => handleDeleteProject(e, project)}
-                title="Delete project"
-                disabled={deletingProjectId === project.id}
-              >
-                {deletingProjectId === project.id ? '⏳' : '🗑️'}
-              </button>
+              {project.description && (
+                <div style={isMobile ? styles.mobileProjectDesc : styles.projectDesc}>
+                  {project.description}
+                </div>
+              )}
             </div>
           ))
         )}
@@ -171,7 +165,7 @@ export function ProjectSelector({ projects, selectedProject, onSelectProject, on
 const styles = {
   // Desktop styles
   container: {
-    width: '300px',
+    width: '315px',
     backgroundColor: '#f8fafc',
     borderRight: '1px solid #e2e8f0',
     padding: '20px',
@@ -247,29 +241,26 @@ const styles = {
     gap: '8px',
   },
   projectItem: {
-    padding: '12px',
+    padding: '14px',
     backgroundColor: 'white',
     borderRadius: '8px',
     cursor: 'pointer',
     transition: 'all 0.2s',
-    border: '2px solid transparent',
+    borderWidth: '2px',
+    borderStyle: 'solid',
+    borderColor: 'transparent',
     display: 'flex',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    gap: '8px',
+    flexDirection: 'column',
+    gap: '4px',
   },
   projectItemActive: {
     borderColor: '#3b82f6',
     backgroundColor: '#eff6ff',
   },
-  projectContent: {
-    flex: 1,
-    minWidth: 0,
-  },
   projectName: {
     fontWeight: '600',
     marginBottom: '4px',
-    fontSize: '20px',
+    fontSize: '16px',
     color: '#1e293b',
     display: 'flex',
     alignItems: 'center',
@@ -283,6 +274,7 @@ const styles = {
   projectDesc: {
     fontSize: '12px',
     color: '#64748b',
+    textAlign: 'justify',
   },
   deleteButton: {
     background: 'none',
@@ -413,7 +405,9 @@ const styles = {
     borderRadius: '12px',
     cursor: 'pointer',
     transition: 'all 0.2s',
-    border: '2px solid transparent',
+    borderWidth: '2px',
+    borderStyle: 'solid',
+    borderColor: 'transparent',
     display: 'flex',
     alignItems: 'flex-start',
     justifyContent: 'space-between',

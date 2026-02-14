@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { tasksApi } from '../services/api';
 
 export function useTasks(projectId) {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const currentProjectIdRef = useRef(projectId);
 
   const fetchTasks = async () => {
     if (!projectId) {
@@ -13,15 +14,30 @@ export function useTasks(projectId) {
       return;
     }
 
+    // Store the current projectId this request is for
+    const requestProjectId = projectId;
+    currentProjectIdRef.current = projectId;
+
     try {
       setLoading(true);
-      const data = await tasksApi.getAll({ projectId });
-      setTasks(data);
-      setError(null);
+      const data = await tasksApi.getAll({ projectId: requestProjectId });
+      
+      // Only update state if this request is still for the current project
+      // This prevents race conditions when rapidly switching projects
+      if (requestProjectId === currentProjectIdRef.current) {
+        setTasks(data);
+        setError(null);
+      }
     } catch (err) {
-      setError(err.message);
+      // Only update error state if this request is still for the current project
+      if (requestProjectId === currentProjectIdRef.current) {
+        setError(err.message);
+      }
     } finally {
-      setLoading(false);
+      // Only update loading state if this request is still for the current project
+      if (requestProjectId === currentProjectIdRef.current) {
+        setLoading(false);
+      }
     }
   };
 
