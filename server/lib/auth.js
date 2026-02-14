@@ -42,9 +42,11 @@ class AuthService {
 
     const db = await getDatabase();
     
-    // Check if user exists
+    // Check if user exists (case-insensitive)
     const existing = await db.get(
-      'SELECT id FROM users WHERE username = ? OR email = ?',
+      `SELECT id FROM users 
+       WHERE username = ? COLLATE NOCASE 
+       OR email = ? COLLATE NOCASE`,
       [username, email]
     );
     
@@ -74,7 +76,7 @@ class AuthService {
     
     const user = await db.get(
       `SELECT * FROM users 
-       WHERE (username = ? OR email = ?) 
+       WHERE (username = ? COLLATE NOCASE OR email = ? COLLATE NOCASE) 
        AND user_type = 'human'
        AND is_active = 1`,
       [username, username]

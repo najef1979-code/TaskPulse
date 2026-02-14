@@ -31,22 +31,21 @@ export function Login({ onSwitchToRegister }) {
         <div style={styles.logoContainer}>
           <img src="/logo.png" alt="TaskPulse Logo" style={styles.logo} />
         </div>
-        <p style={styles.subtitle}>Sign in to your account</p>
+        <p style={styles.subtitle}>Sign in to <span style={{color: '#f97316'}}>Task</span><span style={{color: '#3b82f6'}}>Pulse</span></p>
 
         {error && <div style={styles.error}>{error}</div>}
 
         <form onSubmit={handleSubmit} style={styles.formInner}>
           <div style={styles.field}>
-            <label style={styles.label}>Username</label>
+            <label style={styles.label}>Username or Password</label>
             <input
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               style={styles.input}
-              placeholder="Enter your username"
+              placeholder="Enter Username or Password"
               required
             />
-            <span style={styles.hintText}>Username is case-sensitive</span>
           </div>
 
           <div style={styles.field}>
@@ -104,7 +103,7 @@ const styles = {
     marginBottom: '16px',
   },
   logo: {
-    maxWidth: '360px',
+    maxWidth: '324px',
     height: 'auto',
   },
   form: {
@@ -125,7 +124,8 @@ const styles = {
   subtitle: {
     margin: '0 0 32px 0',
     fontSize: '16px',
-    color: '#64748b',
+    color: '#f97316',
+    fontWeight: 'bold',
     textAlign: 'center',
   },
   error: {
@@ -140,7 +140,7 @@ const styles = {
   formInner: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '20px',
+    gap: '12px',
   },
   field: {
     display: 'flex',
@@ -156,7 +156,7 @@ const styles = {
     padding: '12px',
     border: '1px solid #cbd5e1',
     borderRadius: '6px',
-    fontSize: '14px',
+    fontSize: '13px',
     outline: 'none',
     transition: 'border-color 0.2s',
   },
