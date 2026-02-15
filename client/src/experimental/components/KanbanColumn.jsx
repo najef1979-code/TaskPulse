@@ -3,6 +3,7 @@ import { spacing, typography, getTheme, colors, transition, radius } from '../fi
 import { TaskCard } from './TaskCard';
 import { Icon } from './Icon';
 import { useSubtasks } from '../../hooks/useSubtasks';
+import { projectsApi } from '../../services/api';
 
 /**
  * KanbanColumn Component
@@ -304,10 +305,22 @@ export function KanbanColumn({
     setShowMenu(false);
   };
 
-  const handleSaveEdit = () => {
-    console.log('Saving project:', editingProject.id, editForm);
-    setEditingProject(null);
-    setEditForm({ name: '', description: '' });
+  const handleSaveEdit = async () => {
+    try {
+      await projectsApi.update(editingProject.id, {
+        name: editForm.name,
+        description: editForm.description,
+      });
+      setEditingProject(null);
+      setEditForm({ name: '', description: '' });
+      // Trigger a refresh by notifying parent
+      if (onTaskUpdate) {
+        onTaskUpdate();
+      }
+    } catch (error) {
+      console.error('Failed to save project:', error);
+      alert('Failed to save project. Please try again.');
+    }
   };
 
   const handleCancelEdit = () => {

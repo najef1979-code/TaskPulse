@@ -3,6 +3,7 @@ import { spacing, typography, radius, getTheme, colors, transition } from '../fi
 import { Badge } from './Badge';
 import { Icon } from './Icon';
 import { EditSubtaskModal } from '../../components/EditSubtaskModal';
+import { tasksApi } from '../../services/api';
 
 // Helper functions (outside component)
 const getStatusVariant = (status) => {
@@ -432,12 +433,23 @@ export function TaskCard({
     setShowTaskMenu(false);
   };
 
-  const handleSaveTask = () => {
-    console.log('Saving task:', editingTask.id, editTaskForm);
-    setEditingTask(null);
-    setEditTaskForm({ title: '', description: '', priority: '', status: '', due_date: '' });
-    if (onTaskUpdate) {
-      onTaskUpdate();
+  const handleSaveTask = async () => {
+    try {
+      await tasksApi.update(editingTask.id, {
+        title: editTaskForm.title,
+        description: editTaskForm.description,
+        priority: editTaskForm.priority,
+        status: editTaskForm.status,
+        due_date: editTaskForm.due_date || null,
+      });
+      setEditingTask(null);
+      setEditTaskForm({ title: '', description: '', priority: '', status: '', due_date: '' });
+      if (onTaskUpdate) {
+        onTaskUpdate();
+      }
+    } catch (error) {
+      console.error('Failed to save task:', error);
+      alert('Failed to save task. Please try again.');
     }
   };
 

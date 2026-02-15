@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useProjects } from '../hooks/useProjects';
 import { useAuth } from '../hooks/useAuth';
 import { Sidebar } from './components/Sidebar';
@@ -195,7 +195,12 @@ function ProjectTasks({ project, isDark, filters, userId, onNewTask, onTaskUpdat
  */
 export function FintechDashboard({ onExit }) {
   const { user } = useAuth();
-  const [isDark, setIsDark] = useState(false);
+  // Initialize dark mode from localStorage or system preference
+  const [isDark, setIsDark] = useState(() => {
+    const saved = localStorage.getItem('fintech-dashboard-darkmode');
+    if (saved !== null) return saved === 'true';
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [viewportWidth, setViewportWidth] = useState(window.innerWidth);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
@@ -245,6 +250,11 @@ export function FintechDashboard({ onExit }) {
   useEffect(() => {
     localStorage.setItem('fintech-dashboard-filters', JSON.stringify(filters));
   }, [filters]);
+
+  // Save dark mode preference to localStorage
+  useEffect(() => {
+    localStorage.setItem('fintech-dashboard-darkmode', isDark.toString());
+  }, [isDark]);
 
   // Calculate active filter count for badge
   const activeFilterCount = (() => {

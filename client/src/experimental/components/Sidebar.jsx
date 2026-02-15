@@ -5,6 +5,8 @@ import { SingleSelectChips } from './SelectChips';
 import { SelectChips } from './SelectChips';
 import { DateRangeInput } from './DateRangeInput';
 import { ToggleSwitch } from './ToggleSwitch';
+import { useProjects } from '../../hooks/useProjects';
+import { projectsApi } from '../../services/api';
 
 /**
  * Sidebar Component
@@ -26,6 +28,9 @@ export function Sidebar({
   const [editProjectForm, setEditProjectForm] = useState({ name: '', description: '' });
   const [showProjectMenu, setShowProjectMenu] = useState(null);
 
+  // Fetch real projects from API
+  const { projects: realProjects, loading: projectsLoading } = useProjects();
+
   const shadow = {
     cardLight: '0 2px 8px rgba(0, 0, 0, 0.05)',
     cardHoverLight: '0 6px 20px rgba(0, 0, 0, 0.08)',
@@ -37,41 +42,14 @@ export function Sidebar({
     width: '1px',
   };
 
-  const projects = [
-    {
-      id: 1,
-      title: 'Create New Website',
-      description: 'Website redesign project',
-      items: [
-        { id: 'today', label: 'Today', icon: 'today' },
-        { id: 'calendar', label: 'Calendar', icon: 'calendar' },
-        { id: 'timeline', label: 'Timeline', icon: 'timeline' },
-        { id: 'gantt', label: 'Gantt', icon: 'gantt' },
-        { id: 'table', label: 'Table', icon: 'table' },
-      ],
-    },
-    {
-      id: 2,
-      title: 'Design New App',
-      description: 'Mobile app design',
-      items: [
-        { id: 'today2', label: 'Today', icon: 'today' },
-        { id: 'calendar2', label: 'Calendar', icon: 'calendar' },
-        { id: 'gantt2', label: 'Gantt', icon: 'gantt' },
-      ],
-    },
-    {
-      id: 3,
-      title: 'Build a System',
-      description: 'System architecture',
-      items: [
-        { id: 'today3', label: 'Today', icon: 'today' },
-        { id: 'calendar3', label: 'Calendar', icon: 'calendar' },
-        { id: 'timeline3', label: 'Timeline', icon: 'timeline' },
-        { id: 'gantt3', label: 'Gantt', icon: 'gantt' },
-      ],
-    },
-  ];
+  // Transform real projects to sidebar format
+  const projects = realProjects.map(project => ({
+    id: project.id,
+    title: project.name,
+    description: project.description,
+    // No sub-items for now - just show project name
+    items: [],
+  }));
 
   const toggleProject = (projectId) => {
     setExpandedProjects(prev => ({
@@ -90,10 +68,18 @@ export function Sidebar({
     setShowProjectMenu(null);
   };
 
-  const handleSaveProject = () => {
-    console.log('Saving project:', editingProject.id, editProjectForm);
-    setEditingProject(null);
-    setEditProjectForm({ name: '', description: '' });
+  const handleSaveProject = async () => {
+    try {
+      await projectsApi.update(editingProject.id, {
+        name: editProjectForm.name,
+        description: editProjectForm.description,
+      });
+      setEditingProject(null);
+      setEditProjectForm({ name: '', description: '' });
+    } catch (error) {
+      console.error('Failed to save project:', error);
+      alert('Failed to save project. Please try again.');
+    }
   };
 
   const handleCancelEdit = () => {
