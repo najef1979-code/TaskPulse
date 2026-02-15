@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 
-export function UserMenu({ onNavigateToAssignments, onNavigateToUnassigned, onNavigateToDashboard }) {
+export function UserMenu({ onNavigateToAssignments, onNavigateToUnassigned, onNavigateToDashboard, onNavigateToExperimental }) {
   const { user, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -58,6 +58,11 @@ export function UserMenu({ onNavigateToAssignments, onNavigateToUnassigned, onNa
           <button onClick={handleNavigateToUnassigned} style={styles.menuItem}>
             <span style={styles.menuItemIcon}>✨</span>
             Unassigned Tasks
+          </button>
+
+          <button onClick={onNavigateToExperimental} style={styles.menuItem}>
+            <span style={styles.menuItemIcon}>🎨</span>
+            Experimental Dashboard
           </button>
 
           <hr style={styles.divider} />

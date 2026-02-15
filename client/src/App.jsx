@@ -14,6 +14,7 @@ import { UnassignedTasks } from './components/UnassignedTasks';
 import { MobileNav } from './components/MobileNav';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { activityApi, tasksApi } from './services/api';
+import { FintechDashboard } from './experimental/FintechDashboard';
 import './App.css';
 
 function AppContent() {
@@ -37,8 +38,10 @@ function AppContent() {
   const [showProjectDrawer, setShowProjectDrawer] = useState(false);
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
   const [installPrompt, setInstallPrompt] = useState(null);
-  const [currentView, setCurrentView] = useState('home'); // 'home', 'assignments', or 'unassigned'
+  const [currentView, setCurrentView] = useState('home'); // 'home', 'assignments', 'unassigned', or 'experimental'
   const [highlightedAssignment, setHighlightedAssignment] = useState(null);
+  const [isExperimentalView, setIsExperimentalView] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   // Function to refresh subtasks for a specific task
   const refreshSubtasksForTask = async (taskId) => {
@@ -167,6 +170,10 @@ function AppContent() {
     setHighlightedAssignment(null);
   };
 
+  const handleNavigateToExperimental = () => {
+    setCurrentView('experimental');
+  };
+
   // Show loading while checking authentication
   if (authLoading) {
     return <div style={styles.loading}>Loading TaskPulse...</div>;
@@ -184,7 +191,8 @@ function AppContent() {
   // Main app when authenticated
   return (
     <div style={styles.app}>
-      {/* Desktop Header / Mobile Top Bar - Always show */}
+      {/* Desktop Header / Mobile Top Bar - Hide in experimental view */}
+      {currentView !== 'experimental' && (
       <header style={isMobile ? styles.mobileHeader : styles.header}>
           {isMobile && (
             <button 
@@ -212,10 +220,12 @@ function AppContent() {
                 onNavigateToAssignments={handleNavigateToAssignments}
                 onNavigateToUnassigned={handleNavigateToUnassigned}
                 onNavigateToDashboard={handleNavigateToDashboard}
+                onNavigateToExperimental={handleNavigateToExperimental}
               />
             )}
           </div>
         </header>
+      )}
 
       {/* Install PWA Banner */}
       {showInstallPrompt && (
@@ -271,7 +281,13 @@ function AppContent() {
 
         {/* Main Content */}
         <div style={styles.content}>
-          {currentView === 'assignments' ? (
+          {currentView === 'experimental' ? (
+            <FintechDashboard
+              isDark={isDarkMode}
+              onToggleDarkMode={() => setIsDarkMode(!isDarkMode)}
+              onExit={() => setCurrentView('home')}
+            />
+          ) : currentView === 'assignments' ? (
             <MyAssignments 
               onBack={handleBackToHome}
               highlightItem={highlightedAssignment}
@@ -303,8 +319,8 @@ function AppContent() {
         </div>
       </div>
 
-        {/* Mobile Bottom Navigation */}
-        {isMobile && (
+        {/* Mobile Bottom Navigation - Hide in experimental view */}
+        {isMobile && currentView !== 'experimental' && (
           <MobileNav 
             selectedProject={selectedProject}
             onOpenProjects={() => setShowProjectDrawer(true)}
@@ -312,6 +328,7 @@ function AppContent() {
             onNavigateToAssignments={handleNavigateToAssignments}
             onNavigateToUnassigned={handleNavigateToUnassigned}
             onNavigateToDashboard={handleNavigateToDashboard}
+            onNavigateToExperimental={handleNavigateToExperimental}
           />
         )}
 
