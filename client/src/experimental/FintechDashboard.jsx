@@ -308,6 +308,8 @@ export function FintechDashboard({ onExit }) {
     paddingBottom: isMobileDevice ? '80px' : spacing.xl,
     // Always show horizontal scrollbar
     scrollbarWidth: 'auto',
+    // Fixed height to keep scrollbar visible at bottom
+    height: 'calc(100vh - 60px)',
   };
 
   const boardStyles = {
