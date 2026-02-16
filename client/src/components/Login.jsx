@@ -126,10 +126,10 @@ const styles = {
     marginBottom: '0',
   },
   logo: {
-    maxWidth: '500px',
+    maxWidth: '350px',
     width: '100%',
     height: 'auto',
-    maxHeight: '80vh',
+    maxHeight: '70vh',
   },
   brandTitle: {
     margin: '0 0 16px 0',
@@ -155,7 +155,7 @@ const styles = {
   formCard: {
     backgroundColor: 'white',
     padding: '48px',
-    borderRadius: '16px',
+    borderRadius: '0',
     boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06)',
     width: '100%',
     maxWidth: '440px',
