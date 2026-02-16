@@ -5,7 +5,7 @@ import { Button } from './Button';
 
 /**
  * Header Component
- * Top header with project info and action buttons
+ * Top header with TaskPulse branding, project info and action buttons
  */
 export function Header({ 
   projectName = 'All Projects', 
@@ -16,35 +16,51 @@ export function Header({
 }) {
   const theme = getTheme(isDark);
 
-  const border = {
-    width: '1px',
-  };
-
   const headerStyles = {
-    height: layout.header.height,
+    height: isMobile ? '64px' : '60px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: `0 ${spacing.xl}`,
-    backgroundColor: theme.header.bg,
+    padding: isMobile ? `0 ${spacing.md}` : `0 ${spacing.xl}`,
+    backgroundColor: isDark ? '#1e293b' : '#f8fafc',
+    borderBottom: isDark ? '1px solid #334155' : '1px solid #e2e8f0',
+    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
   };
 
   const leftSectionStyles = {
     display: 'flex',
     alignItems: 'center',
-    gap: spacing.md,
+    gap: isMobile ? spacing.sm : spacing.md,
+    flex: 1,
+    minWidth: 0,
+  };
+
+  const logoStyles = {
+    height: isMobile ? '36px' : '42px',
+    width: 'auto',
+    flexShrink: 0,
+  };
+
+  const logoTxtStyles = {
+    height: isMobile ? '34px' : '40px',
+    width: 'auto',
+    flexShrink: 0,
   };
 
   const titleStyles = {
-    fontSize: typography.xl,
+    fontSize: isMobile ? typography.lg : typography.xl,
     fontWeight: typography.weights.semibold,
-    color: theme.header.textPrimary,
+    color: isDark ? '#ffffff' : '#1e293b',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
   };
 
   const rightSectionStyles = {
     display: 'flex',
     alignItems: 'center',
-    gap: spacing.md,
+    gap: spacing.sm,
+    flexShrink: 0,
   };
 
   const iconButtonStyles = {
@@ -57,31 +73,49 @@ export function Header({
     alignItems: 'center',
     justifyContent: 'center',
     cursor: 'pointer',
-    color: isDark ? theme.text.secondary : colors.grayLight[600],
-    transition: `background-color ${transition.fast}`,
+    color: isDark ? '#94a3b8' : '#64748b',
+    transition: `background-color ${transition.fast}, color ${transition.fast}`,
   };
 
   return (
     <div style={headerStyles}>
-      {/* Left Section */}
+      {/* Left Section - Logos and Title */}
       <div style={leftSectionStyles}>
-        <div style={titleStyles}>{projectName}</div>
+        <img 
+          src="/logo.png" 
+          alt="TaskPulse" 
+          style={logoStyles}
+        />
+        <img 
+          src="/logotxt.png" 
+          alt="TaskPulse" 
+          style={logoTxtStyles}
+        />
+        {!isMobile && (
+          <>
+            <div style={{ width: '1px', height: '32px', backgroundColor: isDark ? '#334155' : '#e2e8f0', marginLeft: spacing.md }} />
+            <div style={titleStyles}>{projectName}</div>
+          </>
+        )}
       </div>
 
-      {/* Right Section */}
+      {/* Right Section - Action Buttons */}
       <div style={rightSectionStyles}>
         {/* Notification Bell */}
         <button
           style={iconButtonStyles}
           onClick={() => console.log('Notifications clicked')}
           onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = isDark ? colors.grayDark[200] : colors.grayLight[100];
+            e.currentTarget.style.backgroundColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)';
+            e.currentTarget.style.color = isDark ? '#ffffff' : '#1e293b';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.backgroundColor = 'transparent';
+            e.currentTarget.style.color = isDark ? '#94a3b8' : '#64748b';
           }}
+          aria-label="Notifications"
         >
-          <Icon name="bell" size={18} />
+          <Icon name="bell" size={20} />
         </button>
 
         {/* Filter Button */}
@@ -89,13 +123,16 @@ export function Header({
           style={iconButtonStyles}
           onClick={onFilterClick}
           onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = isDark ? colors.grayDark[200] : colors.grayLight[100];
+            e.currentTarget.style.backgroundColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)';
+            e.currentTarget.style.color = isDark ? '#ffffff' : '#1e293b';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.backgroundColor = 'transparent';
+            e.currentTarget.style.color = isDark ? '#94a3b8' : '#64748b';
           }}
+          aria-label="Filters"
         >
-          <Icon name="filter" size={18} />
+          <Icon name="filter" size={20} />
         </button>
       </div>
     </div>
