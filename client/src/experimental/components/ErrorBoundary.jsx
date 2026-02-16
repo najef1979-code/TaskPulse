@@ -161,4 +161,6 @@ class ErrorBoundary extends Component {
   }
 }
 
+// Export both named and default for compatibility
+export { ErrorBoundary };
 export default ErrorBoundary;
