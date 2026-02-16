@@ -46,7 +46,7 @@ export function Register({ onSwitchToLogin }) {
       <div style={styles.leftPanel}>
         <div style={styles.branding}>
           <div style={styles.logoContainer}>
-            <img src="/logo.png" alt="TaskPulse Logo" style={styles.logo} />
+            <img src="/login.png" alt="TaskPulse Logo" style={styles.logo} />
           </div>
           <h1 style={styles.brandTitle}>Join TaskPulse</h1>
           <p style={styles.brandSubtitle}>Create an account to start managing your tasks</p>

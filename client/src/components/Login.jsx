@@ -29,7 +29,7 @@ export function Login({ onSwitchToRegister }) {
       <div style={styles.leftPanel}>
         <div style={styles.branding}>
           <div style={styles.logoContainer}>
-            <img src="/logo.png" alt="TaskPulse Logo" style={styles.logo} />
+            <img src="/login.png" alt="TaskPulse Logo" style={styles.logo} />
           </div>
           <h1 style={styles.brandTitle}>Welcome Back</h1>
           <p style={styles.brandSubtitle}>Sign in to continue to TaskPulse</p>
