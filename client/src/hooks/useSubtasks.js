@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { subtasksApi } from '../services/api';
 
 export function useSubtasks(taskId) {
   const [subtasks, setSubtasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const currentTaskIdRef = useRef(taskId);
 
   const fetchSubtasks = async () => {
     if (!taskId) {
@@ -13,15 +14,30 @@ export function useSubtasks(taskId) {
       return;
     }
 
+    // Store the current taskId this request is for
+    const requestTaskId = taskId;
+    currentTaskIdRef.current = taskId;
+
     try {
       setLoading(true);
-      const data = await subtasksApi.getForTask(taskId);
-      setSubtasks(data);
-      setError(null);
+      const data = await subtasksApi.getForTask(requestTaskId);
+      
+      // Only update state if this request is still for the current task
+      // This prevents race conditions when rapidly switching tasks
+      if (requestTaskId === currentTaskIdRef.current) {
+        setSubtasks(data);
+        setError(null);
+      }
     } catch (err) {
-      setError(err.message);
+      // Only update error state if this request is still for the current task
+      if (requestTaskId === currentTaskIdRef.current) {
+        setError(err.message);
+      }
     } finally {
-      setLoading(false);
+      // Only update loading state if this request is still for the current task
+      if (requestTaskId === currentTaskIdRef.current) {
+        setLoading(false);
+      }
     }
   };
 

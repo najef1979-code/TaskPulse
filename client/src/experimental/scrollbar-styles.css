@@ -1,0 +1,62 @@
+/**
+ * Webkit Scrollbar Styling
+ * Adds custom scrollbar styles for Chrome, Safari, and other webkit browsers
+ */
+
+/* Custom scrollbar for webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+/* Scrollbar track */
+::-webkit-scrollbar-track {
+  background: #F3F4F6;
+}
+
+/* Scrollbar thumb */
+::-webkit-scrollbar-thumb {
+  background: #D1D5DB;
+  border-radius: 5px;
+  transition: background 0.2s ease;
+}
+
+/* Scrollbar thumb on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #9CA3AF;
+}
+
+/* Dark mode scrollbar styling */
+@media (prefers-color-scheme: dark) {
+  ::-webkit-scrollbar-track {
+    background: #27272A;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #52525B;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #71717A;
+  }
+}
+
+/* Thin scrollbar variant */
+.thin-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+}
+
+/* Hide scrollbar but keep functionality */
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari, Opera */
+}

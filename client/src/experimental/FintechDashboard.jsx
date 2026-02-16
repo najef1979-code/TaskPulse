@@ -9,6 +9,8 @@ import { TaskModal } from '../components/TaskModal';
 import { useTasks } from '../hooks/useTasks';
 import { MobileFilterBar } from './components/MobileFilterBar';
 import { FiltersBottomSheet } from './components/FiltersBottomSheet';
+import { ToastContainer, useToast } from './components/Toast';
+import './scrollbar-styles.css';
 
 /**
  * Custom hook for simple mobile detection based on screen width
@@ -96,6 +98,7 @@ function useDragToScroll(scrollRef) {
 
 /**
  * Filter tasks based on filters object
+ * Note: This function is now memoized in FintechDashboard component
  */
 function filterTasks(tasks, filters, userId) {
   if (!tasks || !filters) return tasks;
@@ -171,7 +174,8 @@ function filterTasks(tasks, filters, userId) {
 function ProjectTasks({ project, isDark, filters, userId, onNewTask, onTaskUpdate }) {
   const { tasks, loading } = useTasks(project.id);
   
-  const filteredTasks = filterTasks(tasks, filters, userId);
+  // Memoize filtered tasks to prevent recalculation on every render
+  const filteredTasks = useMemo(() => filterTasks(tasks, filters, userId), [tasks, filters, userId]);
 
   // Hide project column if no tasks match filters
   if (!loading && (!filteredTasks || filteredTasks.length === 0)) {
@@ -206,6 +210,9 @@ export function FintechDashboard({ onExit }) {
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [selectedProjectForTask, setSelectedProjectForTask] = useState(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  
+  // Toast notifications
+  const { toasts, showSuccess, showError, showInfo, showWarning, removeToast } = useToast();
   
   // Simple mobile detection based on screen width
   const isMobileDevice = useIsMobile();
@@ -256,8 +263,8 @@ export function FintechDashboard({ onExit }) {
     localStorage.setItem('fintech-dashboard-darkmode', isDark.toString());
   }, [isDark]);
 
-  // Calculate active filter count for badge
-  const activeFilterCount = (() => {
+  // Memoize active filter count for badge to prevent recalculation
+  const activeFilterCount = useMemo(() => {
     let count = 0;
     if (filters.search) count++;
     if (filters.assignment !== 'all') count++;
@@ -267,7 +274,7 @@ export function FintechDashboard({ onExit }) {
     if (filters.showOverdue) count++;
     if (filters.hasSubtasks) count++;
     return count;
-  })();
+  }, [filters]);
 
   // Determine sidebar state based on device type and viewport
   // Use robust mobile detection to hide sidebar on mobile devices
@@ -465,6 +472,7 @@ export function FintechDashboard({ onExit }) {
       {/* Dark Mode Toggle */}
       <button
         onClick={() => setIsDark(!isDark)}
+        aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
         style={{
           position: 'fixed',
           bottom: spacing.lg,
@@ -488,9 +496,28 @@ export function FintechDashboard({ onExit }) {
           e.currentTarget.style.transform = 'scale(1)';
         }}
       >
-        <span style={{ fontSize: '24px' }}>
-          {isDark ? '☀️' : '🌙'}
-        </span>
+        {/* Use SVG icon instead of emoji */}
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={isDark ? '#FBBF24' : '#6366F1'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          {isDark ? (
+            // Sun icon
+            <>
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </>
+          ) : (
+            // Moon icon
+            <>
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </>
+          )}
+        </svg>
       </button>
 
       {/* Exit Button */}
@@ -532,6 +559,9 @@ export function FintechDashboard({ onExit }) {
           projectId={selectedProjectForTask}
         />
       )}
+
+      {/* Toast Notifications */}
+      <ToastContainer toasts={toasts} removeToast={removeToast} isDark={isDark} />
     </div>
   );
 }

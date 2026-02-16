@@ -15,6 +15,7 @@ import { MobileNav } from './components/MobileNav';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { activityApi, tasksApi } from './services/api';
 import { FintechDashboard } from './experimental/FintechDashboard';
+import { ErrorBoundary as ExperimentalErrorBoundary } from './experimental/components/ErrorBoundary';
 import './App.css';
 
 function AppContent() {
@@ -282,11 +283,9 @@ function AppContent() {
         {/* Main Content */}
         <div style={styles.content}>
           {currentView === 'experimental' ? (
-            <FintechDashboard
-              isDark={isDarkMode}
-              onToggleDarkMode={() => setIsDarkMode(!isDarkMode)}
-              onExit={() => setCurrentView('home')}
-            />
+            <ExperimentalErrorBoundary isDark={isDarkMode}>
+              <FintechDashboard onExit={() => setCurrentView('home')} />
+            </ExperimentalErrorBoundary>
           ) : currentView === 'assignments' ? (
             <MyAssignments 
               onBack={handleBackToHome}

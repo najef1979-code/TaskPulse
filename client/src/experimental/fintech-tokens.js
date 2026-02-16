@@ -176,6 +176,26 @@ export const layout = {
   },
 };
 
+// Scrollbar styling
+export const scrollbar = {
+  width: {
+    thin: '6px',
+    normal: '10px',
+  },
+  track: {
+    dark: '#27272A',
+    light: '#F3F4F6',
+  },
+  thumb: {
+    dark: '#52525B',
+    light: '#D1D5DB',
+    hover: {
+      dark: '#71717A',
+      light: '#9CA3AF',
+    },
+  },
+};
+
 // Light mode theme
 export const lightTheme = {
   background: colors.grayLight[50],
