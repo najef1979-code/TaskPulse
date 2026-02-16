@@ -301,12 +301,11 @@ export function FintechDashboard({ onExit }) {
   const boardContainerStyles = {
     flex: 1,
     overflowX: 'auto',
-    overflowY: 'hidden',
+    overflowY: 'auto',
     paddingLeft: sidebarState.isHidden ? 0 : isCollapsed ? layout.sidebar.collapsed : layout.sidebar.expanded,
     transition: `padding-left ${transition.normal}`,
-    maxHeight: 'calc(100vh - 200px)',
     // Add bottom padding on mobile devices for the filter bar
-    paddingBottom: isMobileDevice ? '80px' : '0',
+    paddingBottom: isMobileDevice ? '80px' : spacing.xl,
   };
 
   const boardStyles = {
