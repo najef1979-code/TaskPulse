@@ -39,7 +39,7 @@ function AppContent() {
   const [showProjectDrawer, setShowProjectDrawer] = useState(false);
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
   const [installPrompt, setInstallPrompt] = useState(null);
-  const [currentView, setCurrentView] = useState('home'); // 'home', 'assignments', 'unassigned', or 'experimental'
+  const [currentView, setCurrentView] = useState('experimental'); // 'home', 'assignments', 'unassigned', or 'experimental'
   const [highlightedAssignment, setHighlightedAssignment] = useState(null);
   const [isExperimentalView, setIsExperimentalView] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
