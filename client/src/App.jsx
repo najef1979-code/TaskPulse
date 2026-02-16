@@ -28,7 +28,8 @@ function AppContent() {
     createTask, 
     updateTaskStatus, 
     deleteTask,
-    assignTask
+    assignTask,
+    refetch: refetchTasks
   } = useTasks(selectedProject?.id);
   const [taskSubtaskCounts, setTaskSubtaskCounts] = useState({});
   const [taskSubtasks, setTaskSubtasks] = useState({});
@@ -280,6 +281,7 @@ function AppContent() {
               taskSubtaskCounts={taskSubtaskCounts}
               taskSubtasks={taskSubtasks}
               onRefreshSubtasks={refreshSubtasksForTask}
+              onTasksRefresh={refetchTasks}
               isMobile={isMobile}
             />
           )}

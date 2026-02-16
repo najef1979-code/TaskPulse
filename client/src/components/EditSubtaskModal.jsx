@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { subtasksApi } from '../services/api';
 import { AssignmentSelector } from './AssignmentSelector';
 
-export function EditSubtaskModal({ subtask, onClose, onUpdate }) {
+export function EditSubtaskModal({ subtask, onClose, onUpdate, onTasksRefresh }) {
   const [question, setQuestion] = useState(subtask.question);
   const [options, setOptions] = useState(
     subtask.type === 'multiple_choice' && subtask.options
@@ -53,6 +53,7 @@ export function EditSubtaskModal({ subtask, onClose, onUpdate }) {
     try {
       await subtasksApi.update(subtask.id, updates);
       onUpdate();
+      if (onTasksRefresh) onTasksRefresh();
       onClose();
     } catch (err) {
       alert('Failed to update subtask: ' + err.message);
@@ -67,6 +68,7 @@ export function EditSubtaskModal({ subtask, onClose, onUpdate }) {
     try {
       await subtasksApi.delete(subtask.id);
       onUpdate();
+      if (onTasksRefresh) onTasksRefresh();
       onClose();
     } catch (err) {
       alert('Failed to delete subtask: ' + err.message);

@@ -12,6 +12,7 @@ export function KanbanBoard({
   taskSubtaskCounts, 
   taskSubtasks,
   onRefreshSubtasks,
+  onTasksRefresh,
   isMobile = false 
 }) {
   const [showNewTaskForm, setShowNewTaskForm] = useState(null); // null or column status
@@ -247,6 +248,7 @@ export function KanbanBoard({
               setSelectedTask(null);
               onRefreshSubtasks(selectedTask.id);
             }}
+            onTasksRefresh={onTasksRefresh}
             isMobile={isMobile}
           />
         )}
@@ -390,6 +392,7 @@ export function KanbanBoard({
             setSelectedTask(null);
             onRefreshSubtasks(selectedTask.id);
           }}
+          onTasksRefresh={onTasksRefresh}
         />
       )}
     </>

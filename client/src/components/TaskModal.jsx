@@ -4,7 +4,7 @@ import { AssignmentSelector } from './AssignmentSelector';
 import { EditSubtaskModal } from './EditSubtaskModal';
 import { formatDateLong, getDueDateColor, toISODate } from '../utils/dates';
 
-export function TaskModal({ task, onClose, onUpdate, onSave }) {
+export function TaskModal({ task, onClose, onUpdate, onSave, onTasksRefresh }) {
   // Support both onUpdate and onSave for backward compatibility
   const handleUpdate = onUpdate || onSave || (() => {});
   const [fullTask, setFullTask] = useState(null);
@@ -64,6 +64,7 @@ export function TaskModal({ task, onClose, onUpdate, onSave }) {
       setEditingDates(false);
       loadFullTask();
       onUpdate();
+      if (onTasksRefresh) onTasksRefresh();
     } catch (err) {
       alert('Failed to update dates: ' + err.message);
     }
@@ -102,6 +103,8 @@ export function TaskModal({ task, onClose, onUpdate, onSave }) {
       setNewSubtaskProvidedFile('no_file');
       setNewSubtaskFileReference('');
       loadFullTask();
+      handleUpdate();
+      if (onTasksRefresh) onTasksRefresh();
     } catch (err) {
       alert('Failed to create subtask: ' + err.message);
     }
@@ -158,6 +161,7 @@ export function TaskModal({ task, onClose, onUpdate, onSave }) {
                 await tasksApi.assign(task.id, userId);
                 loadFullTask();
                 handleUpdate();
+                if (onTasksRefresh) onTasksRefresh();
               } catch (err) {
                 alert('Failed to assign task: ' + err.message);
               }
@@ -284,6 +288,7 @@ export function TaskModal({ task, onClose, onUpdate, onSave }) {
                                     await subtasksApi.update(subtask.id, { assigned_to: userId });
                                     loadFullTask();
                                     handleUpdate();
+                                    if (onTasksRefresh) onTasksRefresh();
                                   } catch (err) {
                                     alert('Failed to assign subtask: ' + err.message);
                                   }
@@ -437,6 +442,7 @@ export function TaskModal({ task, onClose, onUpdate, onSave }) {
               loadFullTask();
               handleUpdate();
             }}
+            onTasksRefresh={onTasksRefresh}
           />
         )}
 
@@ -631,17 +637,17 @@ const styles = {
     borderBottom: '2px solid #e2e8f0',
   },
   subtaskMultipleChoice: {
-    backgroundColor: '#e0f2fe',
-    borderColor: '#bae6fd',
+    backgroundColor: 'var(--color-primary-90)',
+    borderColor: 'var(--color-primary-70)',
   },
   subtaskOpenAnswer: {
-    backgroundColor: '#f3e8ff',
-    borderColor: '#e9d5ff',
+    backgroundColor: 'var(--color-secondary-90)',
+    borderColor: 'var(--color-secondary-70)',
   },
   optionMultipleChoice: {
-    backgroundColor: '#bae6fd',
-    color: '#0284c7',
-    borderColor: '#7dd3fc',
+    backgroundColor: 'var(--color-primary-70)',
+    color: 'var(--color-primary-60)',
+    borderColor: 'var(--color-primary-40)',
   },
   subtask: {
     padding: 'var(--spacing-lg)',
