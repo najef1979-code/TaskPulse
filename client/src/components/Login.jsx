@@ -31,8 +31,6 @@ export function Login({ onSwitchToRegister }) {
           <div style={styles.logoContainer}>
             <img src="/login.png" alt="TaskPulse Logo" style={styles.logo} />
           </div>
-          <h1 style={styles.brandTitle}>Welcome Back</h1>
-          <p style={styles.brandSubtitle}>Sign in to continue to TaskPulse</p>
         </div>
       </div>
       
@@ -125,11 +123,13 @@ const styles = {
   logoContainer: {
     display: 'flex',
     justifyContent: 'center',
-    marginBottom: '32px',
+    marginBottom: '0',
   },
   logo: {
-    maxWidth: '200px',
+    maxWidth: '500px',
+    width: '100%',
     height: 'auto',
+    maxHeight: '80vh',
   },
   brandTitle: {
     margin: '0 0 16px 0',
