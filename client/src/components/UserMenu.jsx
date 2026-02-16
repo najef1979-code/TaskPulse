@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 
-export function UserMenu({ onNavigateToAssignments, onNavigateToUnassigned, onNavigateToDashboard, onNavigateToExperimental }) {
+export function UserMenu({ onNavigateToDashboard, onNavigateToExperimental }) {
   const { user, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -10,19 +10,9 @@ export function UserMenu({ onNavigateToAssignments, onNavigateToUnassigned, onNa
     setIsOpen(false);
   };
 
-  const handleNavigateToAssignments = () => {
-    setIsOpen(false);
-    onNavigateToAssignments();
-  };
-
   const handleNavigateToDashboard = () => {
     setIsOpen(false);
     onNavigateToDashboard();
-  };
-
-  const handleNavigateToUnassigned = () => {
-    setIsOpen(false);
-    onNavigateToUnassigned();
   };
 
   return (
@@ -48,16 +38,6 @@ export function UserMenu({ onNavigateToAssignments, onNavigateToUnassigned, onNa
           <button onClick={handleNavigateToDashboard} style={styles.menuItem}>
             <span style={styles.menuItemIcon}>📊</span>
             Dashboard
-          </button>
-
-          <button onClick={handleNavigateToAssignments} style={styles.menuItem}>
-            <span style={styles.menuItemIcon}>📋</span>
-            My Assignments
-          </button>
-
-          <button onClick={handleNavigateToUnassigned} style={styles.menuItem}>
-            <span style={styles.menuItemIcon}>✨</span>
-            Unassigned Tasks
           </button>
 
           <button onClick={onNavigateToExperimental} style={styles.menuItem}>

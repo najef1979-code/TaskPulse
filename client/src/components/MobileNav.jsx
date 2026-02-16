@@ -1,4 +1,4 @@
-export function MobileNav({ selectedProject, onOpenProjects, onLogout, onNavigateToAssignments, onNavigateToUnassigned, onNavigateToDashboard, onNavigateToExperimental }) {
+export function MobileNav({ onOpenProjects, onLogout, onNavigateToDashboard, onNavigateToExperimental }) {
   return (
     <nav style={styles.nav}>
       <button style={styles.navButton} onClick={onNavigateToDashboard}>
@@ -9,16 +9,6 @@ export function MobileNav({ selectedProject, onOpenProjects, onLogout, onNavigat
       <button style={styles.navButton} onClick={onOpenProjects}>
         <span style={styles.navIcon}>📁</span>
         <span style={styles.navLabel}>Projects</span>
-      </button>
-      
-      <button style={styles.navButton} onClick={onNavigateToAssignments}>
-        <span style={styles.navIcon}>📋</span>
-        <span style={styles.navLabel}>My Assignments</span>
-      </button>
-
-      <button style={styles.navButton} onClick={onNavigateToUnassigned}>
-        <span style={styles.navIcon}>✨</span>
-        <span style={styles.navLabel}>Unassigned</span>
       </button>
 
       <button style={styles.navButton} onClick={onNavigateToExperimental}>

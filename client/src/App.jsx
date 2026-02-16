@@ -9,8 +9,6 @@ import { Login } from './components/Login';
 import { Register } from './components/Register';
 import { UserMenu } from './components/UserMenu';
 import { WhatsNewPopup } from './components/WhatsNewPopup';
-import { MyAssignments } from './components/MyAssignments';
-import { UnassignedTasks } from './components/UnassignedTasks';
 import { MobileNav } from './components/MobileNav';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { activityApi, tasksApi } from './services/api';
@@ -39,9 +37,7 @@ function AppContent() {
   const [showProjectDrawer, setShowProjectDrawer] = useState(false);
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
   const [installPrompt, setInstallPrompt] = useState(null);
-  const [currentView, setCurrentView] = useState('experimental'); // 'home', 'assignments', 'unassigned', or 'experimental'
-  const [highlightedAssignment, setHighlightedAssignment] = useState(null);
-  const [isExperimentalView, setIsExperimentalView] = useState(false);
+  const [currentView, setCurrentView] = useState('experimental'); // 'home' or 'experimental'
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   // Function to refresh subtasks for a specific task
@@ -150,25 +146,8 @@ function AppContent() {
     window.location.reload();
   };
 
-  const handleNavigateToAssignments = (highlightItem = null) => {
-    setHighlightedAssignment(highlightItem);
-    setCurrentView('assignments');
-    setShowWhatsNew(false);
-  };
-
-  const handleNavigateToUnassigned = () => {
-    setCurrentView('unassigned');
-    setShowWhatsNew(false);
-  };
-
   const handleNavigateToDashboard = () => {
     setCurrentView('home');
-    setHighlightedAssignment(null);
-  };
-
-  const handleBackToHome = () => {
-    setCurrentView('home');
-    setHighlightedAssignment(null);
   };
 
   const handleNavigateToExperimental = () => {
@@ -218,8 +197,6 @@ function AppContent() {
           <div style={styles.headerRight}>
             {!isMobile && (
               <UserMenu 
-                onNavigateToAssignments={handleNavigateToAssignments}
-                onNavigateToUnassigned={handleNavigateToUnassigned}
                 onNavigateToDashboard={handleNavigateToDashboard}
                 onNavigateToExperimental={handleNavigateToExperimental}
               />
@@ -286,19 +263,10 @@ function AppContent() {
             <ExperimentalErrorBoundary isDark={isDarkMode}>
               <FintechDashboard onExit={() => setCurrentView('home')} />
             </ExperimentalErrorBoundary>
-          ) : currentView === 'assignments' ? (
-            <MyAssignments 
-              onBack={handleBackToHome}
-              highlightItem={highlightedAssignment}
-            />
-          ) : currentView === 'unassigned' ? (
-            <UnassignedTasks 
-              onBack={handleBackToHome}
-            />
           ) : !selectedProject ? (
             <div style={styles.emptyState}>
               <h2>{isMobile ? '☰ Open menu' : '👈 Select a project'}</h2>
-              <p>{isMobile ? 'Tap the menu to select or create a project' : 'or create a new one'}</p>
+              <p>{isMobile ? 'Tap menu to select or create a project' : 'or create a new one'}</p>
             </div>
           ) : tasksLoading ? (
             <div style={styles.loading}>Loading tasks...</div>
@@ -321,11 +289,8 @@ function AppContent() {
         {/* Mobile Bottom Navigation - Hide in experimental view */}
         {isMobile && currentView !== 'experimental' && (
           <MobileNav 
-            selectedProject={selectedProject}
             onOpenProjects={() => setShowProjectDrawer(true)}
             onLogout={handleLogout}
-            onNavigateToAssignments={handleNavigateToAssignments}
-            onNavigateToUnassigned={handleNavigateToUnassigned}
             onNavigateToDashboard={handleNavigateToDashboard}
             onNavigateToExperimental={handleNavigateToExperimental}
           />
@@ -336,7 +301,6 @@ function AppContent() {
         <WhatsNewPopup
           data={whatsNewData}
           onClose={() => setShowWhatsNew(false)}
-          onNavigateToAssignments={handleNavigateToAssignments}
         />
       )}
     </div>

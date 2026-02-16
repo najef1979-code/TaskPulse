@@ -1,6 +1,6 @@
 import { authApi } from '../services/api';
 
-export function WhatsNewPopup({ data, onClose, onNavigateToAssignments }) {
+export function WhatsNewPopup({ data, onClose }) {
   if (!data || data.totalChanges === 0) return null;
 
   const handleGotIt = async () => {
@@ -10,11 +10,6 @@ export function WhatsNewPopup({ data, onClose, onNavigateToAssignments }) {
       console.error('Failed to update last visit:', err);
     }
     onClose();
-  };
-
-  const handleActivityClick = (activity) => {
-    onClose();
-    onNavigateToAssignments(activity);
   };
 
   return (
@@ -42,7 +37,6 @@ export function WhatsNewPopup({ data, onClose, onNavigateToAssignments }) {
                 <div 
                   key={activity.id} 
                   style={styles.activityItem}
-                  onClick={() => handleActivityClick(activity)}
                 >
                   <div style={styles.activityMessage}>
                     <span style={styles.activityIcon}>→</span>
@@ -52,7 +46,6 @@ export function WhatsNewPopup({ data, onClose, onNavigateToAssignments }) {
                     <span style={styles.activityTime}>
                       {formatActivityTime(activity.createdAt)}
                     </span>
-                    <span style={styles.clickHint}>Click to view</span>
                   </div>
                 </div>
               ))}
