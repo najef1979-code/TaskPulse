@@ -293,6 +293,9 @@ export function FintechDashboard({ onExit }) {
   const headerContainerStyles = {
     paddingLeft: 0,
     transition: `padding-left ${transition.normal}`,
+    position: 'sticky',
+    top: 0,
+    zIndex: 50,
   };
 
   const boardContainerStyles = {
