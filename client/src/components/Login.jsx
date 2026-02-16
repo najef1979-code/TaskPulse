@@ -17,6 +17,7 @@ export function Login({ onSwitchToRegister }) {
 
     try {
       await login(username, password);
+      // Login successful, parent will handle redirect
     } catch (err) {
       setError(err.message || 'Login failed');
     } finally {
@@ -26,74 +27,63 @@ export function Login({ onSwitchToRegister }) {
 
   return (
     <div style={styles.container}>
-      <div style={styles.leftPanel}>
-        <div style={styles.branding}>
-          <div style={styles.logoContainer}>
-            <img src="/login.png" alt="TaskPulse Logo" style={styles.logo} />
-          </div>
+      <div style={styles.form}>
+        <div style={styles.logoContainer}>
+          <img src="/logo.png" alt="TaskPulse Logo" style={styles.logo} />
         </div>
-      </div>
-      
-      <div style={styles.rightPanel}>
-        <div style={styles.formCard}>
-          <div style={styles.formHeader}>
-            <h2 style={styles.formTitle}>Sign In</h2>
-            <p style={styles.formSubtitle}>Enter your credentials to access your account</p>
+        <p style={styles.subtitle}>Sign in to <span style={{color: '#f97316'}}>Task</span><span style={{color: '#3b82f6'}}>Pulse</span></p>
+
+        {error && <div style={styles.error}>{error}</div>}
+
+        <form onSubmit={handleSubmit} style={styles.formInner}>
+          <div style={styles.field}>
+            <label style={styles.label}>Username or Password</label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              style={styles.input}
+              placeholder="Enter Username or Password"
+              required
+            />
           </div>
 
-          {error && <div style={styles.error}>{error}</div>}
+          <div style={styles.field}>
+            <label style={styles.label}>Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              style={styles.input}
+              placeholder="Enter your password"
+              required
+            />
+          </div>
 
-          <form onSubmit={handleSubmit} style={styles.form}>
-            <div style={styles.field}>
-              <label style={styles.label}>Username or Password</label>
-              <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                style={styles.input}
-                placeholder="Enter your username or password"
-                required
-                autoFocus
-              />
-            </div>
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              ...styles.button,
+              ...(loading ? styles.buttonDisabled : {}),
+            }}
+          >
+            {loading ? 'Signing in...' : 'Sign In'}
+          </button>
+        </form>
 
-            <div style={styles.field}>
-              <label style={styles.label}>Password</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                style={styles.input}
-                placeholder="Enter your password"
-                required
-              />
-            </div>
-
+        {ALLOW_REGISTRATION && (
+          <p style={styles.switchText}>
+            Don't have an account?{' '}
             <button
-              type="submit"
-              disabled={loading}
-              style={{
-                ...styles.button,
-                ...(loading ? styles.buttonDisabled : {}),
-              }}
+              type="button"
+              onClick={onSwitchToRegister}
+              style={styles.switchButton}
             >
-              {loading ? 'Signing in...' : 'Sign In'}
+              Create one
             </button>
-          </form>
-
-          {ALLOW_REGISTRATION && (
-            <p style={styles.switchText}>
-              Don't have an account?{' '}
-              <button
-                type="button"
-                onClick={onSwitchToRegister}
-                style={styles.switchButton}
-              >
-                Create one
-              </button>
-            </p>
-          )}
-        </div>
+          </p>
+        )}
       </div>
     </div>
   );
@@ -102,96 +92,55 @@ export function Login({ onSwitchToRegister }) {
 const styles = {
   container: {
     display: 'flex',
-    minHeight: '100vh',
-    backgroundColor: '#f8fafc',
-  },
-  leftPanel: {
-    flex: 1,
-    display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
-    padding: '40px',
-    '@media (max-width: 768px)': {
-      display: 'none',
-    },
-  },
-  branding: {
-    textAlign: 'center',
-    color: 'white',
+    minHeight: '100vh',
+    backgroundColor: '#f1f5f9',
   },
   logoContainer: {
     display: 'flex',
     justifyContent: 'center',
-    marginBottom: '0',
+    marginBottom: '16px',
   },
   logo: {
-    maxWidth: '350px',
-    width: '100%',
+    maxWidth: '324px',
     height: 'auto',
-    maxHeight: '70vh',
-  },
-  brandTitle: {
-    margin: '0 0 16px 0',
-    fontSize: '42px',
-    fontWeight: '700',
-    color: 'white',
-    letterSpacing: '-0.5px',
-  },
-  brandSubtitle: {
-    margin: 0,
-    fontSize: '18px',
-    color: '#94a3b8',
-    fontWeight: '400',
-  },
-  rightPanel: {
-    flex: 1,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '40px',
-    backgroundColor: '#f8fafc',
-  },
-  formCard: {
-    backgroundColor: 'white',
-    padding: '48px',
-    borderRadius: '0',
-    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06)',
-    width: '100%',
-    maxWidth: '440px',
-  },
-  formHeader: {
-    marginBottom: '32px',
-    textAlign: 'center',
-  },
-  formTitle: {
-    margin: '0 0 8px 0',
-    fontSize: '28px',
-    fontWeight: '700',
-    color: '#0f172a',
-    letterSpacing: '-0.5px',
-  },
-  formSubtitle: {
-    margin: 0,
-    fontSize: '14px',
-    color: '#64748b',
-    fontWeight: '400',
-  },
-  error: {
-    backgroundColor: '#fef2f2',
-    color: '#dc2626',
-    padding: '14px',
-    borderRadius: '8px',
-    marginBottom: '24px',
-    fontSize: '14px',
-    fontWeight: '500',
-    textAlign: 'center',
-    border: '1px solid #fecaca',
   },
   form: {
+    backgroundColor: 'white',
+    padding: '40px',
+    borderRadius: '12px',
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+    width: '100%',
+    maxWidth: '400px',
+  },
+  title: {
+    margin: '0 0 8px 0',
+    fontSize: '32px',
+    fontWeight: '700',
+    color: '#1e293b',
+    textAlign: 'center',
+  },
+  subtitle: {
+    margin: '0 0 32px 0',
+    fontSize: '16px',
+    color: '#f97316',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  error: {
+    backgroundColor: '#fee2e2',
+    color: '#dc2626',
+    padding: '12px',
+    borderRadius: '6px',
+    marginBottom: '20px',
+    fontSize: '14px',
+    textAlign: 'center',
+  },
+  formInner: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '20px',
+    gap: '12px',
   },
   field: {
     display: 'flex',
@@ -200,65 +149,37 @@ const styles = {
   },
   label: {
     fontSize: '14px',
-    fontWeight: '600',
-    color: '#374151',
-    letterSpacing: '0.5px',
+    fontWeight: '500',
+    color: '#334155',
   },
   input: {
-    padding: '14px 16px',
-    border: '1px solid #e2e8f0',
-    borderRadius: '8px',
-    fontSize: '15px',
-    color: '#1e293b',
+    padding: '12px',
+    border: '1px solid #cbd5e1',
+    borderRadius: '6px',
+    fontSize: '13px',
     outline: 'none',
-    transition: 'all 0.2s',
-    backgroundColor: '#f8fafc',
-    ':focus': {
-      borderColor: '#3b82f6',
-      backgroundColor: 'white',
-      boxShadow: '0 0 0 3px rgba(59, 130, 246, 0.1)',
-    },
-    ':hover': {
-      borderColor: '#cbd5e1',
-      backgroundColor: 'white',
-    },
+    transition: 'border-color 0.2s',
   },
   button: {
-    padding: '14px 24px',
+    padding: '12px',
     backgroundColor: '#3b82f6',
     color: 'white',
     border: 'none',
-    borderRadius: '8px',
+    borderRadius: '6px',
     fontSize: '16px',
-    fontWeight: '600',
+    fontWeight: '500',
     cursor: 'pointer',
-    transition: 'all 0.2s',
-    letterSpacing: '0.5px',
-    marginTop: '8px',
-    ':hover': {
-      backgroundColor: '#2563eb',
-      transform: 'translateY(-1px)',
-      boxShadow: '0 4px 12px rgba(59, 130, 246, 0.4)',
-    },
-    ':active': {
-      transform: 'translateY(0)',
-    },
+    transition: 'background-color 0.2s',
   },
   buttonDisabled: {
     backgroundColor: '#94a3b8',
     cursor: 'not-allowed',
-    ':hover': {
-      backgroundColor: '#94a3b8',
-      transform: 'none',
-      boxShadow: 'none',
-    },
   },
   switchText: {
-    margin: '28px 0 0 0',
+    margin: '24px 0 0 0',
     fontSize: '14px',
     color: '#64748b',
     textAlign: 'center',
-    fontWeight: '400',
   },
   switchButton: {
     background: 'none',
@@ -266,12 +187,13 @@ const styles = {
     color: '#3b82f6',
     cursor: 'pointer',
     fontSize: '14px',
-    fontWeight: '600',
-    textDecoration: 'none',
+    fontWeight: '500',
+    textDecoration: 'underline',
     padding: 0,
-    ':hover': {
-      textDecoration: 'underline',
-      color: '#2563eb',
-    },
+  },
+  hintText: {
+    fontSize: '12px',
+    color: '#94a3b8',
+    marginTop: '4px',
   },
 };
