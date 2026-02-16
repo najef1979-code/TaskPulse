@@ -179,7 +179,6 @@ const styles = {
   logo: {
     maxWidth: '200px',
     height: 'auto',
-    filter: 'brightness(0) invert(1)',
   },
   brandTitle: {
     margin: '0 0 16px 0',
