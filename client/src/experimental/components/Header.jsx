@@ -79,7 +79,7 @@ export function Header({
 
   return (
     <div style={headerStyles}>
-      {/* Left Section - Logos and Title */}
+      {/* Left Section - Logos only */}
       <div style={leftSectionStyles}>
         <img 
           src="/logo.png" 
@@ -91,12 +91,6 @@ export function Header({
           alt="TaskPulse" 
           style={logoTxtStyles}
         />
-        {!isMobile && (
-          <>
-            <div style={{ width: '1px', height: '32px', backgroundColor: isDark ? '#334155' : '#e2e8f0', marginLeft: spacing.md }} />
-            <div style={titleStyles}>{projectName}</div>
-          </>
-        )}
       </div>
 
       {/* Right Section - Action Buttons */}

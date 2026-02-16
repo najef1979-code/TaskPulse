@@ -291,7 +291,7 @@ export function FintechDashboard({ onExit }) {
   };
 
   const headerContainerStyles = {
-    paddingLeft: sidebarState.isHidden ? 0 : isCollapsed ? layout.sidebar.collapsed : layout.sidebar.expanded,
+    paddingLeft: 0,
     transition: `padding-left ${transition.normal}`,
   };
 
