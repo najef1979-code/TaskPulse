@@ -300,6 +300,7 @@ export function FintechDashboard({ onExit }) {
 
   const boardContainerStyles = {
     flex: 1,
+    minHeight: 0,
     overflowX: 'scroll',
     overflowY: 'auto',
     paddingLeft: sidebarState.isHidden ? 0 : isCollapsed ? layout.sidebar.collapsed : layout.sidebar.expanded,
@@ -308,8 +309,6 @@ export function FintechDashboard({ onExit }) {
     paddingBottom: isMobileDevice ? '80px' : spacing.xl,
     // Always show horizontal scrollbar
     scrollbarWidth: 'auto',
-    // Fixed height to keep scrollbar visible at bottom
-    height: 'calc(100vh - 60px)',
   };
 
   const boardStyles = {
