@@ -10,13 +10,13 @@
   "icons": [
     {
       "src": "/taskicon.png",
-      "sizes": "512x512",
+      "sizes": "101x136",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
       "src": "/ProjectIcon.png",
-      "sizes": "512x512",
+      "sizes": "117x132",
       "type": "image/png",
       "purpose": "any maskable"
     }
