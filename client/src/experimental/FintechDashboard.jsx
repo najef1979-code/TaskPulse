@@ -284,23 +284,21 @@ export function FintechDashboard({ onExit }) {
 
   const mainContentStyles = {
     backgroundColor: theme.background,
-    minHeight: '100vh',
+    height: '100vh',
     display: 'flex',
     flexDirection: 'column',
     transition: `background-color ${transition.normal}`,
+    overflow: 'hidden',
   };
 
   const headerContainerStyles = {
     paddingLeft: 0,
     transition: `padding-left ${transition.normal}`,
-    position: 'sticky',
-    top: 0,
-    zIndex: 50,
+    flexShrink: 0,
   };
 
   const boardContainerStyles = {
     flex: 1,
-    minHeight: 0,
     overflowX: 'scroll',
     overflowY: 'auto',
     paddingLeft: sidebarState.isHidden ? 0 : isCollapsed ? layout.sidebar.collapsed : layout.sidebar.expanded,
