@@ -119,7 +119,7 @@ to complete without your input. The AI Assistent can create Projects, Tasks and 
 ## 📸 Screenshots
 
 ### Login Screen
-<img src="https://github.com/najef1979-code/TaskPulse/blob/main/TaskPulse-Login.png?raw=true" alt="TaskPulse Login Screen" width="250"/>
+<img src="https://github.com/najef1979-code/TemPAzure/blob/main/TaskPulse-Login.png?raw=true" alt="TaskPulse Login Screen" width="250"/>
 
 *Clean, modern login interface with optional registration link*
 
