@@ -395,10 +395,12 @@ class AuthService {
   async listUsers() {
     const db = await getDatabase();
     return db.all(
-      `SELECT id, username, email, full_name, user_type, is_active, created_at, last_login
-       FROM users
-       WHERE is_active = 1 AND user_type = 'human'
-       ORDER BY created_at DESC`
+      `SELECT u.id, u.username, u.email, u.full_name, u.user_type, u.is_active, u.created_at, u.last_login,
+             t.id as team_id, t.name as team_name
+       FROM users u
+       LEFT JOIN teams t ON u.team_id = t.id
+       WHERE u.is_active = 1 AND u.user_type = 'human'
+       ORDER BY u.created_at DESC`
     );
   }
 
