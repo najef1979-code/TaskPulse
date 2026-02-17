@@ -22,7 +22,6 @@ async function registerUser() {
   const email = await question('Email: ');
   const password = await question('Password: ');
   const fullName = await question('Full Name (optional): ');
-  const teamName = await question('Team Name (leave empty to create without team): ');
   
   try {
     const user = await authService.register({
@@ -32,26 +31,22 @@ async function registerUser() {
       fullName: fullName || undefined
     });
     
-    let team = null;
-    if (teamName.trim()) {
-      team = await authService.createTeam({
-        name: teamName.trim(),
-        ownerId: user.id
-      });
-      console.log('\n✅ Team created successfully!');
-      console.log(`   Team: ${team.name}`);
-    } else {
-      console.log('\n⚠️  No team created. User will not be able to see or create projects/tasks.');
-    }
+    // Always create a default team for CLI-created users
+    // This ensures they can create and manage projects
+    const defaultTeamName = `${username}'s Team`;
+    const team = await authService.createTeam({
+      name: defaultTeamName,
+      ownerId: user.id
+    });
+    console.log('\n✅ Default team created successfully!');
+    console.log(`   Team: ${team.name}`);
     
     console.log('\n✅ User created successfully!');
     console.log(`   Username: ${user.username}`);
     console.log(`   Email: ${user.email}`);
     console.log(`   Full Name: ${user.fullName}`);
-    if (team) {
-      console.log(`   Team: ${team.name}`);
-      console.log(`   Role: Team Admin`);
-    }
+    console.log(`   Team: ${team.name}`);
+    console.log(`   Role: Team Admin`);
   } catch (error) {
     console.error(`\n❌ Error: ${error.message}`);
   }
