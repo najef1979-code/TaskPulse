@@ -308,6 +308,33 @@ export function KanbanColumn({
     setShowMenu(false);
   };
 
+  const handleDeleteProject = async () => {
+    setShowMenu(false);
+    
+    const taskCount = tasks.length;
+    const subtaskCount = tasks.reduce((sum, task) => {
+      // Estimate subtask count from task data
+      return sum + (task.subtask_count || 0);
+    }, 0);
+
+    const message = taskCount > 0 || subtaskCount > 0
+      ? `⚠️ This will delete "${project.name}" and ALL its data:\n\n• ${taskCount} task${taskCount > 1 ? 's' : ''}\n• ${subtaskCount} subtask${subtaskCount > 1 ? 's' : ''}\n\nThis action cannot be undone. Are you sure?`
+      : `Delete project "${project.name}"?`;
+
+    if (!confirm(message)) {
+      return;
+    }
+
+    try {
+      await projectsApi.delete(project.id);
+      if (onProjectUpdate) {
+        onProjectUpdate();
+      }
+    } catch (error) {
+      alert('Failed to delete project: ' + error.message);
+    }
+  };
+
   const handleSaveEdit = async () => {
     try {
       await projectsApi.update(editingProject.id, {
@@ -474,6 +501,22 @@ export function KanbanColumn({
                 >
                   <Icon name="edit" size={14} />
                   <span>Edit Project</span>
+                </div>
+                <div
+                  style={{
+                    ...menuItemStyles,
+                    borderTop: `1px solid ${isDark ? colors.grayDark[300] : colors.grayLight[200]}`,
+                  }}
+                  onClick={handleDeleteProject}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = isDark ? colors.grayDark[200] : colors.grayLight[100];
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                  }}
+                >
+                  <Icon name="trash" size={14} />
+                  <span>Delete Project</span>
                 </div>
               </div>
             )}
