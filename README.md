@@ -23,8 +23,6 @@ to complete without your input. The AI Assistent can create Projects, Tasks and 
 
 ## Key Features
 
-### New in v1.2.0
-
 #### **AI Assistant Integration**
 - **API Skill File** - AI assistants can download `GET /api/skill.md` to learn TaskPulse API
 - **Smart Task Creation** - AI can create projects, tasks, and subtasks programmatically
@@ -617,8 +615,8 @@ And if you find it helpfull please considere to buy me a coffee using the GitHub
 ** We hope that it helps make your interactions more efficient **
 
 
-**TaskPulse Version:** v1.2.0  
-**Last Updated:** 2026-02-13
+**TaskPulse Version:** v1.29.0  
+**Last Updated:** 2026-02-17
 
 [⬆ Back to Top](#-taskpulse)
 

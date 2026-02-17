@@ -1,7 +1,7 @@
 # TaskPulse Documentation
 
-**TaskPulse Version:** v1.2.0  
-**Last Updated:** 2026-02-13
+**TaskPulse Version:** v1.9.0  
+**Last Updated:** 2026-02-17
 
 Please use to following guides:
 

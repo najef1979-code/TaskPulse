@@ -1,7 +1,7 @@
 # TaskPulse Management Scripts
 
-**TaskPulse Version:** v1.2.0  
-**Last Updated:** 2026-02-13
+**TaskPulse Version:** v1.9.0  
+**Last Updated:** 2026-02-17
 
 > **Note:** Detailed administration and deployment information has been consolidated into the [Administration Guide](ADMIN_GUIDE.md). This file provides a quick reference for the available management scripts.
 

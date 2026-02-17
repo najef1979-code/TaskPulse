@@ -563,7 +563,7 @@ export function FintechDashboard() {
           isOpen={isSubtaskModalOpen}
           onClose={handleSubtaskModalClose}
           taskId={selectedTaskForSubtask.id}
-          onSubtaskCreated={handleTaskUpdate}
+          onCreate={handleTaskUpdate}
         />
       )}
 
