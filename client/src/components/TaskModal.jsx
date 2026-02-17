@@ -4,25 +4,49 @@ import { AssignmentSelector } from './AssignmentSelector';
 import { EditSubtaskModal } from './EditSubtaskModal';
 import { formatDateLong, getDueDateColor, toISODate } from '../utils/dates';
 
-export function TaskModal({ task, onClose, onUpdate, onSave, onTasksRefresh }) {
+/**
+ * TaskModal - Handles both CREATE and EDIT modes
+ * 
+ * CREATE mode: Pass `projectId` and `isOpen={true}` (no `task` prop)
+ * EDIT mode: Pass `task` object (with existing task data)
+ */
+export function TaskModal({ task, projectId, isOpen, onClose, onUpdate, onSave, onTasksRefresh }) {
+  // Determine mode: EDIT if task provided, CREATE if only projectId
+  const isEditMode = !!task;
+  const isCreateMode = !task && !!projectId;
+  
   // Support both onUpdate and onSave for backward compatibility
   const handleUpdate = onUpdate || onSave || (() => {});
+
+  // Task data state
   const [fullTask, setFullTask] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [editingDates, setEditingDates] = useState(false);
+  const [loading, setLoading] = useState(isEditMode);
+  
+  // Form state (used for both create and edit)
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [priority, setPriority] = useState('medium');
+  const [status, setStatus] = useState('pending');
   const [dueDate, setDueDate] = useState('');
   const [startDate, setStartDate] = useState('');
+  const [assignedTo, setAssignedTo] = useState(null);
+  
+  // UI state
+  const [editingDates, setEditingDates] = useState(false);
+  const [editingTask, setEditingTask] = useState(false);
+  const [loadedTaskId, setLoadedTaskId] = useState(null);
+  
+  // Subtask state
   const [newSubtaskQuestion, setNewSubtaskQuestion] = useState('');
   const [newSubtaskOptions, setNewSubtaskOptions] = useState('');
   const [newSubtaskType, setNewSubtaskType] = useState('multiple_choice');
   const [newSubtaskProvidedFile, setNewSubtaskProvidedFile] = useState('no_file');
   const [newSubtaskFileReference, setNewSubtaskFileReference] = useState('');
-  const [loadedTaskId, setLoadedTaskId] = useState(null);
   const [editSubtask, setEditSubtask] = useState(null);
 
+  // Load full task data in EDIT mode
   const loadFullTask = useCallback(async () => {
-    if (!task || !task.id) {
-      console.error('TaskModal: Invalid task object', task);
+    if (!isEditMode || !task?.id) {
       setLoading(false);
       return;
     }
@@ -31,31 +55,122 @@ export function TaskModal({ task, onClose, onUpdate, onSave, onTasksRefresh }) {
     if (loadedTaskId === task.id) return;
     
     try {
-      console.log('TaskModal: Loading full task', task.id);
       const data = await tasksApi.getFull(task.id);
-      console.log('TaskModal: Loaded task', data);
       setFullTask(data);
+      setTitle(data.title);
+      setDescription(data.description || '');
+      setPriority(data.priority || 'medium');
+      setStatus(data.status || 'pending');
       setDueDate(data.due_date ? toISODate(data.due_date) : '');
       setStartDate(data.start_date ? toISODate(data.start_date) : '');
+      setAssignedTo(data.assigned_to);
       setLoadedTaskId(task.id);
     } catch (err) {
       console.error('TaskModal: Failed to load task', err);
       // Fall back to using the task object passed in
-      console.log('TaskModal: Using fallback task data', task);
       setFullTask(task);
+      setTitle(task.title);
+      setDescription(task.description || '');
+      setPriority(task.priority || 'medium');
+      setStatus(task.status || 'pending');
       setDueDate(task.due_date ? toISODate(task.due_date) : '');
       setStartDate(task.start_date ? toISODate(task.start_date) : '');
+      setAssignedTo(task.assigned_to);
       setLoadedTaskId(task.id);
     } finally {
       setLoading(false);
     }
-  }, [task.id, loadedTaskId]);
+  }, [isEditMode, task?.id, loadedTaskId]);
 
   useEffect(() => {
     loadFullTask();
   }, [loadFullTask]);
 
+  // Reset form when modal opens in CREATE mode
+  useEffect(() => {
+    if (isCreateMode && isOpen) {
+      setTitle('');
+      setDescription('');
+      setPriority('medium');
+      setStatus('pending');
+      setDueDate('');
+      setStartDate('');
+      setAssignedTo(null);
+    }
+  }, [isCreateMode, isOpen]);
+
+  // CREATE: Handle new task creation
+  const handleCreateTask = async () => {
+    if (!title.trim()) {
+      alert('Please enter a task title');
+      return;
+    }
+
+    if (!projectId) {
+      console.error('TaskModal: projectId is undefined or null');
+      alert('No project selected. Please close this dialog and try again.');
+      return;
+    }
+
+    console.log('Creating task with projectId:', projectId);
+    console.log('Task data being sent:', {
+      title,
+      description,
+      priority,
+      status,
+      project_id: projectId,
+      due_date: dueDate || null,
+      start_date: startDate || null,
+      assigned_to: assignedTo,
+    });
+
+    try {
+      const result = await tasksApi.create({
+        title,
+        description,
+        priority,
+        status,
+        project_id: projectId,
+        due_date: dueDate || null,
+        start_date: startDate || null,
+        assigned_to: assignedTo,
+      });
+      console.log('Task created successfully:', result);
+      onClose();
+      if (onTasksRefresh) onTasksRefresh();
+    } catch (err) {
+      console.error('TaskModal: Failed to create task', err);
+      console.error('Full error object:', JSON.stringify(err, null, 2));
+      alert('Failed to create task: ' + err.message + '\n\nCheck browser console (F12) for details.');
+    }
+  };
+
+  // EDIT: Handle task update
+  const handleSaveTaskEdit = async () => {
+    if (!task?.id || !title.trim()) {
+      alert('Please enter a task title');
+      return;
+    }
+
+    try {
+      await tasksApi.update(task.id, {
+        title,
+        description,
+        priority,
+        status,
+      });
+      setEditingTask(false);
+      loadFullTask();
+      handleUpdate();
+      if (onTasksRefresh) onTasksRefresh();
+    } catch (err) {
+      alert('Failed to update task: ' + err.message);
+    }
+  };
+
+  // EDIT: Handle dates update
   const handleUpdateDates = async () => {
+    if (!task?.id) return;
     try {
       await tasksApi.update(task.id, {
         due_date: dueDate || null,
@@ -63,21 +178,19 @@ export function TaskModal({ task, onClose, onUpdate, onSave, onTasksRefresh }) {
       });
       setEditingDates(false);
       loadFullTask();
-      onUpdate();
+      handleUpdate();
       if (onTasksRefresh) onTasksRefresh();
     } catch (err) {
       alert('Failed to update dates: ' + err.message);
     }
   };
 
+  // EDIT: Handle subtask creation
   const handleCreateSubtask = async () => {
-    if (!newSubtaskQuestion.trim()) return;
+    if (!task?.id || !newSubtaskQuestion.trim()) return;
 
     const options = newSubtaskType === 'multiple_choice' 
-      ? newSubtaskOptions
-          .split('\n')
-          .map(o => o.trim())
-          .filter(o => o.length > 0)
+      ? newSubtaskOptions.split('\n').map(o => o.trim()).filter(o => o.length > 0)
       : [];
 
     const subtaskData = {
@@ -110,6 +223,7 @@ export function TaskModal({ task, onClose, onUpdate, onSave, onTasksRefresh }) {
     }
   };
 
+  // EDIT: Handle subtask answer
   const handleAnswerSubtask = async (subtaskId, option) => {
     try {
       await subtasksApi.answer(subtaskId, option);
@@ -119,6 +233,10 @@ export function TaskModal({ task, onClose, onUpdate, onSave, onTasksRefresh }) {
     }
   };
 
+  // Don't render in CREATE mode if not open
+  if (isCreateMode && !isOpen) return null;
+
+  // Loading state (EDIT mode only)
   if (loading) {
     return (
       <div style={styles.overlay} onClick={onClose}>
@@ -129,25 +247,198 @@ export function TaskModal({ task, onClose, onUpdate, onSave, onTasksRefresh }) {
     );
   }
 
+  // ==================== CREATE MODE ====================
+  if (isCreateMode) {
+    return (
+      <div style={styles.overlay} onClick={onClose}>
+        <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
+          <div style={styles.header}>
+            <h2 style={styles.title}>Create New Task</h2>
+            <button style={styles.closeButton} onClick={onClose}>✕</button>
+          </div>
+
+          <div style={styles.createForm}>
+            <label style={styles.editLabel}>Task Title *</label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              style={styles.input}
+              placeholder="Enter task title..."
+              autoFocus
+            />
+
+            <label style={styles.editLabel}>Description</label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              style={styles.textarea}
+              placeholder="Add a description..."
+            />
+
+            <label style={styles.editLabel}>Priority</label>
+            <select
+              value={priority}
+              onChange={(e) => setPriority(e.target.value)}
+              style={styles.select}
+            >
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+
+            <label style={styles.editLabel}>Status</label>
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              style={styles.select}
+            >
+              <option value="pending">To Do</option>
+              <option value="in-progress">In Progress</option>
+              <option value="done">Done</option>
+            </select>
+
+            <label style={styles.editLabel}>Assignee</label>
+            <AssignmentSelector
+              currentAssignee={assignedTo}
+              onAssign={setAssignedTo}
+            />
+
+            <div style={styles.dateInputs}>
+              <div style={styles.dateField}>
+                <label style={styles.dateLabel}>Start Date</label>
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  style={styles.dateInput}
+                />
+              </div>
+              <div style={styles.dateField}>
+                <label style={styles.dateLabel}>Due Date</label>
+                <input
+                  type="date"
+                  value={dueDate}
+                  onChange={(e) => setDueDate(e.target.value)}
+                  style={styles.dateInput}
+                />
+              </div>
+            </div>
+
+            <div style={styles.createButtons}>
+              <button onClick={handleCreateTask} style={styles.saveEditButton}>
+                Create Task
+              </button>
+              <button onClick={onClose} style={styles.cancelEditButton}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ==================== EDIT MODE ====================
+  if (!fullTask) {
+    return (
+      <div style={styles.overlay} onClick={onClose}>
+        <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
+          <p>Loading task details...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={styles.overlay} onClick={onClose}>
       <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div style={styles.header}>
           <h2 style={styles.title}>{fullTask.title}</h2>
-          <button style={styles.closeButton} onClick={onClose}>
-            ✕
-          </button>
+          <div style={styles.headerRight}>
+            {!editingTask && (
+              <button 
+                style={styles.editTaskButton}
+                onClick={() => setEditingTask(true)}
+              >
+                ✏️ Edit Task
+              </button>
+            )}
+            <button style={styles.closeButton} onClick={onClose}>
+              ✕
+            </button>
+          </div>
         </div>
 
-        {fullTask.description && (
-          <p style={styles.description}>{fullTask.description}</p>
+        {editingTask ? (
+          <div style={styles.taskEditForm}>
+            <label style={styles.editLabel}>Task Title</label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              style={styles.input}
+              autoFocus
+            />
+
+            <label style={styles.editLabel}>Description</label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              style={styles.textarea}
+              placeholder="Add a description..."
+            />
+
+            <label style={styles.editLabel}>Priority</label>
+            <select
+              value={priority}
+              onChange={(e) => setPriority(e.target.value)}
+              style={styles.select}
+            >
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+
+            <label style={styles.editLabel}>Status</label>
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              style={styles.select}
+            >
+              <option value="pending">To Do</option>
+              <option value="in-progress">In Progress</option>
+              <option value="done">Done</option>
+            </select>
+
+            <div style={styles.taskEditButtons}>
+              <button onClick={handleSaveTaskEdit} style={styles.saveEditButton}>
+                Save Changes
+              </button>
+              <button onClick={() => {
+                setEditingTask(false);
+                setTitle(fullTask.title);
+                setDescription(fullTask.description || '');
+                setPriority(fullTask.priority || 'medium');
+                setStatus(fullTask.status || 'pending');
+              }} style={styles.cancelEditButton}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : (
+          <>
+            {fullTask.description && (
+              <p style={styles.description}>{fullTask.description}</p>
+            )}
+
+            <div style={styles.metadata}>
+              <span>Status: <strong>{fullTask.status}</strong></span>
+              <span>Priority: <strong>{fullTask.priority}</strong></span>
+              <span>Created: {new Date(fullTask.created_at).toLocaleDateString()}</span>
+            </div>
+          </>
         )}
-
-        <div style={styles.metadata}>
-          <span>Status: <strong>{fullTask.status}</strong></span>
-          <span>Priority: <strong>{fullTask.priority}</strong></span>
-          <span>Created: {new Date(fullTask.created_at).toLocaleDateString()}</span>
-        </div>
 
         {/* Assignment Section */}
         <div style={styles.assignmentSection}>
@@ -252,7 +543,6 @@ export function TaskModal({ task, onClose, onUpdate, onSave, onTasksRefresh }) {
         {fullTask.subtasks && fullTask.subtasks.length > 0 && (
           <div style={styles.subtaskList}>
             {(() => {
-              // Group subtasks by type
               const multipleChoiceTasks = fullTask.subtasks.filter(st => 
                 st.type === 'multiple_choice' || (st.options && st.options.length > 0)
               );
@@ -262,7 +552,6 @@ export function TaskModal({ task, onClose, onUpdate, onSave, onTasksRefresh }) {
 
               return (
                 <>
-                  {/* Multiple Choice Subtasks */}
                   {multipleChoiceTasks.length > 0 && (
                     <div style={styles.subtaskSection}>
                       <div style={styles.subtaskSectionHeader}>
@@ -304,7 +593,6 @@ export function TaskModal({ task, onClose, onUpdate, onSave, onTasksRefresh }) {
                             </div>
                           </div>
 
-                          {/* Answer interface based on type */}
                           {subtask.options.length > 0 && (
                             <div style={styles.options}>
                               {subtask.options.map((option) => (
@@ -323,14 +611,12 @@ export function TaskModal({ task, onClose, onUpdate, onSave, onTasksRefresh }) {
                             </div>
                           )}
 
-                          {/* Display answer */}
                           {subtask.answered && (
                             <div style={styles.answer}>
                               <strong>Answer:</strong> {subtask.selected_option}
                             </div>
                           )}
 
-                          {/* File reference */}
                           {subtask.provided_file !== 'no_file' && (
                             <div style={styles.fileReference}>
                               <span style={styles.fileIcon}>
@@ -347,7 +633,6 @@ export function TaskModal({ task, onClose, onUpdate, onSave, onTasksRefresh }) {
                     </div>
                   )}
 
-                  {/* Open Answer Subtasks */}
                   {openAnswerTasks.length > 0 && (
                     <div style={styles.subtaskSection}>
                       <div style={styles.subtaskSectionHeader}>
@@ -373,6 +658,7 @@ export function TaskModal({ task, onClose, onUpdate, onSave, onTasksRefresh }) {
                                     await subtasksApi.update(subtask.id, { assigned_to: userId });
                                     loadFullTask();
                                     handleUpdate();
+                                    if (onTasksRefresh) onTasksRefresh();
                                   } catch (err) {
                                     alert('Failed to assign subtask: ' + err.message);
                                   }
@@ -404,14 +690,12 @@ export function TaskModal({ task, onClose, onUpdate, onSave, onTasksRefresh }) {
                             </div>
                           )}
 
-                          {/* Display answer */}
                           {subtask.answered && (
                             <div style={styles.answer}>
                               <strong>Answer:</strong> {subtask.selected_option}
                             </div>
                           )}
 
-                          {/* File reference */}
                           {subtask.provided_file !== 'no_file' && (
                             <div style={styles.fileReference}>
                               <span style={styles.fileIcon}>
@@ -449,7 +733,6 @@ export function TaskModal({ task, onClose, onUpdate, onSave, onTasksRefresh }) {
         <div style={styles.newSubtaskForm}>
           <h4 style={styles.formTitle}>Add Subtask</h4>
           
-          {/* Type Selector */}
           <div style={styles.typeSelector}>
             <label style={styles.typeLabel}>Type:</label>
             <div style={styles.typeButtons}>
@@ -491,7 +774,6 @@ export function TaskModal({ task, onClose, onUpdate, onSave, onTasksRefresh }) {
             />
           )}
 
-          {/* File Reference Section */}
           <div style={styles.fileSection}>
             <label style={styles.fileLabel}>📁 File Reference:</label>
             <select
@@ -568,6 +850,11 @@ const styles = {
     alignItems: 'flex-start',
     marginBottom: 'var(--spacing-lg)',
   },
+  headerRight: {
+    display: 'flex',
+    gap: 'var(--spacing-sm)',
+    alignItems: 'center',
+  },
   title: {
     margin: 0,
     font: 'var(--headline-small)',
@@ -585,6 +872,93 @@ const styles = {
     borderRadius: 'var(--radius-full)',
     transition: 'background-color var(--duration-short) var(--easing-standard)',
   },
+  editTaskButton: {
+    height: '36px',
+    padding: '0 var(--spacing-md)',
+    backgroundColor: 'var(--color-surface-3)',
+    color: 'var(--color-primary-60)',
+    border: '1px solid var(--color-outline)',
+    borderRadius: 'var(--radius-full)',
+    cursor: 'pointer',
+    fontSize: 'var(--label-large)',
+    fontWeight: '500',
+    textTransform: 'uppercase',
+    letterSpacing: '0.1px',
+    transition: 'all var(--duration-short) var(--easing-standard)',
+  },
+  createForm: {
+    padding: 'var(--spacing-lg)',
+    backgroundColor: 'var(--color-surface-2)',
+    borderRadius: 'var(--radius-md)',
+    marginBottom: 'var(--spacing-lg)',
+  },
+  taskEditForm: {
+    padding: 'var(--spacing-lg)',
+    backgroundColor: 'var(--color-surface-2)',
+    borderRadius: 'var(--radius-md)',
+    marginBottom: 'var(--spacing-lg)',
+  },
+  editLabel: {
+    fontSize: 'var(--label-large)',
+    fontWeight: '500',
+    color: 'var(--color-text-secondary)',
+    marginBottom: 'var(--spacing-xs)',
+    display: 'block',
+  },
+  select: {
+    width: '100%',
+    height: '56px',
+    padding: '0 var(--spacing-lg)',
+    marginBottom: 'var(--spacing-md)',
+    border: '1px solid var(--color-outline)',
+    borderRadius: 'var(--radius-sm)',
+    fontSize: 'var(--body-large)',
+    boxSizing: 'border-box',
+    backgroundColor: 'var(--color-surface-1)',
+    color: 'var(--color-text-primary)',
+    transition: 'all var(--duration-short) var(--easing-standard)',
+    cursor: 'pointer',
+  },
+  taskEditButtons: {
+    display: 'flex',
+    gap: 'var(--spacing-sm)',
+    marginTop: 'var(--spacing-md)',
+  },
+  createButtons: {
+    display: 'flex',
+    gap: 'var(--spacing-sm)',
+    marginTop: 'var(--spacing-md)',
+  },
+  saveEditButton: {
+    flex: 1,
+    height: '40px',
+    padding: '0 var(--spacing-lg)',
+    backgroundColor: 'var(--color-primary-60)',
+    color: 'var(--color-text-inverse)',
+    border: 'none',
+    borderRadius: 'var(--radius-full)',
+    cursor: 'pointer',
+    fontWeight: '500',
+    fontSize: 'var(--label-large)',
+    textTransform: 'uppercase',
+    letterSpacing: '0.1px',
+    transition: 'all var(--duration-short) var(--easing-standard)',
+  },
+  cancelEditButton: {
+    flex: 1,
+    height: '40px',
+    padding: '0 var(--spacing-lg)',
+    backgroundColor: 'var(--color-surface-3)',
+    color: 'var(--color-primary-60)',
+    border: 'none',
+    borderRadius: 'var(--radius-full)',
+    cursor: 'pointer',
+    fontWeight: '500',
+    fontSize: 'var(--label-large)',
+    textTransform: 'uppercase',
+    letterSpacing: '0.1px',
+    transition: 'all var(--duration-short) var(--easing-standard)',
+  },
   description: {
     color: 'var(--color-text-secondary)',
     marginBottom: 'var(--spacing-lg)',
@@ -597,6 +971,7 @@ const styles = {
     fontSize: 'var(--body-medium)',
     color: 'var(--color-text-secondary)',
     marginBottom: 'var(--spacing-lg)',
+    flexWrap: 'wrap',
   },
   divider: {
     border: 'none',
@@ -794,6 +1169,13 @@ const styles = {
     backgroundColor: 'var(--color-surface-1)',
     color: 'var(--color-text-primary)',
     transition: 'all var(--duration-short) var(--easing-standard)',
+    boxSizing: 'border-box',
+    width: '100%',
+  },
+  dateInputs: {
+    display: 'flex',
+    gap: 'var(--spacing-sm)',
+    marginBottom: 'var(--spacing-md)',
   },
   dateEditButtons: {
     display: 'flex',
@@ -859,16 +1241,6 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: 'var(--spacing-sm)',
-  },
-  subtaskTypeBadge: {
-    fontSize: 'var(--label-small)',
-    padding: 'var(--spacing-xs) var(--spacing-sm)',
-    backgroundColor: 'var(--color-surface-3)',
-    borderRadius: 'var(--radius-sm)',
-    color: 'var(--color-text-secondary)',
-    fontWeight: '500',
-    textTransform: 'uppercase',
-    letterSpacing: '0.5px',
   },
   editSubtaskButton: {
     padding: '4px 8px',
@@ -940,8 +1312,6 @@ const styles = {
     textTransform: 'uppercase',
     letterSpacing: '0.1px',
     transition: 'all var(--duration-short) var(--easing-standard)',
-    position: 'relative',
-    overflow: 'hidden',
   },
   typeButtonActive: {
     borderColor: 'var(--color-primary-60)',

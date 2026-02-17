@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { tasksApi } from '../services/api';
 
 export function useTasks(projectId) {
@@ -7,7 +7,8 @@ export function useTasks(projectId) {
   const [error, setError] = useState(null);
   const currentProjectIdRef = useRef(projectId);
 
-  const fetchTasks = async () => {
+  // Memoize fetchTasks to prevent infinite loops
+  const fetchTasks = useCallback(async () => {
     if (!projectId) {
       setTasks([]);
       setLoading(false);
@@ -17,10 +18,18 @@ export function useTasks(projectId) {
     // Store the current projectId this request is for
     const requestProjectId = projectId;
     currentProjectIdRef.current = projectId;
+    let isAuthenticated401 = false;
 
     try {
       setLoading(true);
       const data = await tasksApi.getAll({ projectId: requestProjectId });
+      
+      // Check for 401 response (API returns { success: false, error: 'Unauthorized' })
+      if (data && data.success === false && data.error === 'Unauthorized') {
+        isAuthenticated401 = true;
+        setLoading(false);
+        return; // API layer will handle logout
+      }
       
       // Only update state if this request is still for the current project
       // This prevents race conditions when rapidly switching projects
@@ -28,18 +37,22 @@ export function useTasks(projectId) {
         setTasks(data);
         setError(null);
       }
+      setLoading(false);
     } catch (err) {
-      // Only update error state if this request is still for the current project
-      if (requestProjectId === currentProjectIdRef.current) {
-        setError(err.message);
-      }
-    } finally {
-      // Only update loading state if this request is still for the current project
-      if (requestProjectId === currentProjectIdRef.current) {
-        setLoading(false);
+      // Only update error state for non-401 errors (401 is handled by API layer)
+      // This prevents infinite loops when authentication fails
+      if (requestProjectId === currentProjectIdRef.current && !isAuthenticated401) {
+        // For 401 errors, let the API layer handle logout and don't update any state
+        // This prevents re-render loops
+        if (!err.message?.includes('401') && !err.message?.includes('Unauthorized')) {
+          setError(err.message);
+          setLoading(false);
+        }
+        // For 401, don't update state - let API layer's logout handler handle it
+        // Loading will stay true until logout redirects or component unmounts
       }
     }
-  };
+  }, [projectId]);
 
   const createTask = async (taskData) => {
     try {
@@ -96,7 +109,7 @@ export function useTasks(projectId) {
 
   useEffect(() => {
     fetchTasks();
-  }, [projectId]);
+  }, [projectId, fetchTasks]);
 
   return {
     tasks,

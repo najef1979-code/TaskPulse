@@ -653,6 +653,7 @@ app.post('/api/tasks', async (req, res, next) => {
       teamId: req.user.teamId,
       ownerId,
       createdBy: req.user.id,
+      projectId: req.body.project_id, // Map snake_case to camelCase
       ...req.body,
       actorId: req.user.id,
       actorType: req.user.userType,

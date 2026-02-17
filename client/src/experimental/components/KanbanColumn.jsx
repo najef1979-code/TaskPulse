@@ -9,12 +9,14 @@ import { projectsApi } from '../../services/api';
  * KanbanColumn Component
  * Represents a project column with its tasks and subtasks
  */
-export function KanbanColumn({ 
-  project, 
-  tasks = [], 
-  isDark = false, 
+export function KanbanColumn({
+  project,
+  tasks = [],
+  isDark = false,
   onNewTask,
-  onTaskUpdate
+  onTaskUpdate,
+  onProjectUpdate,
+  onSelectTaskForSubtask
 }) {
   const theme = getTheme(isDark);
   const [expandedTaskId, setExpandedTaskId] = useState(null);
@@ -22,6 +24,7 @@ export function KanbanColumn({
   const [showMenu, setShowMenu] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
   const [editForm, setEditForm] = useState({ name: '', description: '' });
+  const [showTaskSelector, setShowTaskSelector] = useState(false);
 
   const border = {
     width: '1px',
@@ -313,9 +316,9 @@ export function KanbanColumn({
       });
       setEditingProject(null);
       setEditForm({ name: '', description: '' });
-      // Trigger a refresh by notifying parent
-      if (onTaskUpdate) {
-        onTaskUpdate();
+      // Trigger a project refresh by notifying parent
+      if (onProjectUpdate) {
+        onProjectUpdate();
       }
     } catch (error) {
       console.error('Failed to save project:', error);
@@ -485,28 +488,54 @@ export function KanbanColumn({
               <div style={noTasksTextStyles}>
                 No tasks in this project
               </div>
-              <button
-                onClick={handleAddTaskClick}
-                style={{
-                  padding: `${spacing.sm} ${spacing.md}`,
-                  backgroundColor: isDark ? colors.grayDark[200] : colors.grayLight[200],
-                  border: 'none',
-                  borderRadius: radius.md,
-                  color: isDark ? theme.text.primary : colors.grayLight[700],
-                  fontSize: typography.sm,
-                  fontWeight: typography.weights.medium,
-                  cursor: 'pointer',
-                  transition: `background-color ${transition.fast}`,
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = isDark ? colors.grayDark[300] : colors.grayLight[300];
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = isDark ? colors.grayDark[200] : colors.grayLight[200];
-                }}
-              >
-                + Add Task
-              </button>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: spacing.sm }}>
+                <button
+                  onClick={handleAddTaskClick}
+                  style={{
+                    padding: `${spacing.sm} ${spacing.md}`,
+                    backgroundColor: isDark ? colors.grayDark[200] : colors.grayLight[200],
+                    border: 'none',
+                    borderRadius: radius.md,
+                    color: isDark ? theme.text.primary : colors.grayLight[700],
+                    fontSize: typography.sm,
+                    fontWeight: typography.weights.medium,
+                    cursor: 'pointer',
+                    transition: `background-color ${transition.fast}`,
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = isDark ? colors.grayDark[300] : colors.grayLight[300];
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = isDark ? colors.grayDark[200] : colors.grayLight[200];
+                  }}
+                >
+                  + Add Task
+                </button>
+                {tasks.length > 0 && (
+                  <button
+                    onClick={() => setShowTaskSelector(true)}
+                    style={{
+                      padding: `${spacing.sm} ${spacing.md}`,
+                      backgroundColor: isDark ? colors.grayDark[200] : colors.grayLight[200],
+                      border: 'none',
+                      borderRadius: radius.md,
+                      color: isDark ? theme.text.primary : colors.grayLight[700],
+                      fontSize: typography.sm,
+                      fontWeight: typography.weights.medium,
+                      cursor: 'pointer',
+                      transition: `background-color ${transition.fast}`,
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = isDark ? colors.grayDark[300] : colors.grayLight[300];
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = isDark ? colors.grayDark[200] : colors.grayLight[200];
+                    }}
+                  >
+                    + Add Subtask
+                  </button>
+                )}
+              </div>
             </div>
           ) : (
             <>
@@ -522,38 +551,168 @@ export function KanbanColumn({
                 />
               ))}
               
-              <button
-                onClick={handleAddTaskClick}
-                style={{
-                  width: '100%',
-                  padding: spacing.md,
-                  backgroundColor: 'transparent',
-                  border: `${border.width} dashed ${isDark ? colors.grayDark[500] : colors.grayLight[300]}`,
-                  borderRadius: radius.md,
-                  color: isDark ? theme.text.secondary : colors.grayLight[500],
-                  fontSize: typography.sm,
-                  fontWeight: typography.weights.medium,
-                  cursor: 'pointer',
-                  transition: `all ${transition.fast}`,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: spacing.sm,
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = isDark ? colors.grayDark[200] : colors.grayLight[100];
-                  e.currentTarget.style.borderColor = isDark ? colors.grayDark[400] : colors.grayLight[400];
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                  e.currentTarget.style.borderColor = isDark ? colors.grayDark[500] : colors.grayLight[300];
-                }}
-              >
-                <Icon name="plus" size={16} />
-                <span>Add Task</span>
-              </button>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: spacing.sm }}>
+                <button
+                  onClick={handleAddTaskClick}
+                  style={{
+                    width: '100%',
+                    padding: spacing.md,
+                    backgroundColor: 'transparent',
+                    border: `${border.width} dashed ${isDark ? colors.grayDark[500] : colors.grayLight[300]}`,
+                    borderRadius: radius.md,
+                    color: isDark ? theme.text.secondary : colors.grayLight[500],
+                    fontSize: typography.sm,
+                    fontWeight: typography.weights.medium,
+                    cursor: 'pointer',
+                    transition: `all ${transition.fast}`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: spacing.sm,
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = isDark ? colors.grayDark[200] : colors.grayLight[100];
+                    e.currentTarget.style.borderColor = isDark ? colors.grayDark[400] : colors.grayLight[400];
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.borderColor = isDark ? colors.grayDark[500] : colors.grayLight[300];
+                  }}
+                >
+                  <Icon name="plus" size={16} />
+                  <span>Add Task</span>
+                </button>
+                <button
+                  onClick={() => setShowTaskSelector(true)}
+                  style={{
+                    width: '100%',
+                    padding: spacing.md,
+                    backgroundColor: 'transparent',
+                    border: `${border.width} dashed ${isDark ? colors.grayDark[500] : colors.grayLight[300]}`,
+                    borderRadius: radius.md,
+                    color: isDark ? theme.text.secondary : colors.grayLight[500],
+                    fontSize: typography.sm,
+                    fontWeight: typography.weights.medium,
+                    cursor: 'pointer',
+                    transition: `all ${transition.fast}`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: spacing.sm,
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = isDark ? colors.grayDark[200] : colors.grayLight[100];
+                    e.currentTarget.style.borderColor = isDark ? colors.grayDark[400] : colors.grayLight[400];
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.borderColor = isDark ? colors.grayDark[500] : colors.grayLight[300];
+                  }}
+                >
+                  <Icon name="plus" size={16} />
+                  <span>Add Subtask</span>
+                </button>
+              </div>
             </>
           )}
+        </div>
+      </div>
+
+      {/* Task Selector Modal for Subtask */}
+      <div 
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.6)',
+          zIndex: 100,
+          display: showTaskSelector ? 'flex' : 'none',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+        onClick={() => setShowTaskSelector(false)}
+      >
+        <div 
+          style={{
+            backgroundColor: isDark ? colors.grayDark[100] : '#FFFFFF',
+            borderRadius: radius.lg,
+            padding: spacing.xl,
+            width: '400px',
+            maxWidth: '90vw',
+            maxHeight: '70vh',
+            overflow: 'auto',
+            boxShadow: isDark ? shadow.cardHoverDark : shadow.cardHoverLight,
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <h2 style={modalTitleStyles}>Select Task for Subtask</h2>
+          
+          {tasks.length === 0 ? (
+            <p style={{
+              fontSize: typography.sm,
+              color: isDark ? theme.text.secondary : colors.grayLight[500],
+              textAlign: 'center',
+              padding: spacing.xl,
+            }}>
+              No tasks available. Create a task first.
+            </p>
+          ) : (
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: spacing.sm,
+              marginBottom: spacing.xl,
+            }}>
+              {tasks.map(task => (
+                <button
+                  key={task.id}
+                  onClick={() => {
+                    setShowTaskSelector(false);
+                    if (onSelectTaskForSubtask) {
+                      onSelectTaskForSubtask(task);
+                    }
+                  }}
+                  style={{
+                    padding: `${spacing.sm} ${spacing.md}`,
+                    borderRadius: radius.md,
+                    backgroundColor: isDark ? colors.grayDark[200] : colors.grayLight[100],
+                    border: 'none',
+                    color: isDark ? theme.text.primary : colors.grayLight[700],
+                    fontSize: typography.sm,
+                    fontWeight: typography.weights.medium,
+                    cursor: 'pointer',
+                    transition: `all ${transition.fast}`,
+                    textAlign: 'left',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = isDark ? colors.grayDark[300] : colors.grayLight[200];
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = isDark ? colors.grayDark[200] : colors.grayLight[100];
+                  }}
+                >
+                  {task.title}
+                </button>
+              ))}
+            </div>
+          )}
+          
+          <div style={modalButtonsStyles}>
+            <button
+              style={cancelButtonStyles}
+              onClick={() => setShowTaskSelector(false)}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = colors.grayLight[400];
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = isDark ? colors.grayDark[500] : colors.grayLight[300];
+              }}
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       </div>
     </>

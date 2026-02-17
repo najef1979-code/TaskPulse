@@ -6,6 +6,7 @@ import { Header } from './components/Header';
 import { KanbanColumn } from './components/KanbanColumn';
 import { getTheme, colors, spacing, layout, radius, transition, breakpoints } from './fintech-tokens';
 import { TaskModal } from '../components/TaskModal';
+import { CreateSubtaskModal } from '../components/CreateSubtaskModal';
 import { useTasks } from '../hooks/useTasks';
 import { MobileFilterBar } from './components/MobileFilterBar';
 import { FiltersBottomSheet } from './components/FiltersBottomSheet';
@@ -97,85 +98,87 @@ function useDragToScroll(scrollRef) {
 }
 
 /**
- * Filter tasks based on filters object
- * Note: This function is now memoized in FintechDashboard component
- */
-function filterTasks(tasks, filters, userId) {
-  if (!tasks || !filters) return tasks;
-
-  return tasks.filter(task => {
-    // Search filter
-    if (filters.search) {
-      const searchLower = filters.search.toLowerCase();
-      const matchesSearch = 
-        task.title?.toLowerCase().includes(searchLower) ||
-        task.description?.toLowerCase().includes(searchLower) ||
-        task.status?.toLowerCase().includes(searchLower);
-      if (!matchesSearch) return false;
-    }
-
-    // Assignment filter
-    if (filters.assignment === 'assigned') {
-      if (!task.assigned_to || task.assigned_to !== userId) return false;
-    } else if (filters.assignment === 'unassigned') {
-      if (task.assigned_to) return false;
-    }
-
-    // Status filter (always apply if selected)
-    if (filters.status && filters.status.length > 0) {
-      if (!filters.status.includes(task.status?.toLowerCase())) return false;
-    }
-
-    // Priority filter (always apply if selected)
-    if (filters.priority && filters.priority.length > 0) {
-      if (!filters.priority.includes(task.priority?.toLowerCase())) return false;
-    }
-
-    // Due date filter (only when assignment is not 'all')
-    if (filters.assignment !== 'all') {
-      if (filters.dueDate?.start || filters.dueDate?.end) {
-        if (!task.due_date) return false;
-        
-        const taskDate = new Date(task.due_date);
-        if (filters.dueDate.start) {
-          const startDate = new Date(filters.dueDate.start);
-          if (taskDate < startDate) return false;
-        }
-        if (filters.dueDate.end) {
-          const endDate = new Date(filters.dueDate.end);
-          if (taskDate > endDate) return false;
-        }
-      }
-
-      // Show overdue only
-      if (filters.showOverdue) {
-        if (!task.due_date) return false;
-        const taskDate = new Date(task.due_date);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        if (taskDate >= today) return false;
-      }
-
-      // Has subtasks only
-      if (filters.hasSubtasks) {
-        if (!task.subtasks || task.subtasks.length === 0) return false;
-      }
-    }
-
-    return true;
-  });
-}
-
-/**
  * ProjectTasks Component
  * Fetches and filters tasks for a single project
  * Returns null if no tasks match filters (to hide empty columns)
  */
-function ProjectTasks({ project, isDark, filters, userId, onNewTask, onTaskUpdate }) {
-  const { tasks, loading } = useTasks(project.id);
+function ProjectTasks({ project, isDark, filters, userId, onNewTask, onTaskUpdate, onProjectUpdate, refreshTrigger, onSelectTaskForSubtask }) {
+  const { tasks, loading, refetch } = useTasks(project.id);
+  
+  // Refetch tasks when refreshTrigger changes
+  useEffect(() => {
+    refetch();
+  }, [refreshTrigger, refetch]);
+  
+  // Memoize filterTasks function to prevent unnecessary recalculations
+  const filterTasksMemo = useCallback((tasks, filters, userId) => {
+    if (!tasks || !filters) return tasks;
+
+    return tasks.filter(task => {
+      // Search filter
+      if (filters.search) {
+        const searchLower = filters.search.toLowerCase();
+        const matchesSearch = 
+          task.title?.toLowerCase().includes(searchLower) ||
+          task.description?.toLowerCase().includes(searchLower) ||
+          task.status?.toLowerCase().includes(searchLower);
+        if (!matchesSearch) return false;
+      }
+
+      // Assignment filter
+      if (filters.assignment === 'assigned') {
+        if (!task.assigned_to || task.assigned_to !== userId) return false;
+      } else if (filters.assignment === 'unassigned') {
+        if (task.assigned_to) return false;
+      }
+
+      // Status filter (always apply if selected)
+      if (filters.status && filters.status.length > 0) {
+        if (!filters.status.includes(task.status?.toLowerCase())) return false;
+      }
+
+      // Priority filter (always apply if selected)
+      if (filters.priority && filters.priority.length > 0) {
+        if (!filters.priority.includes(task.priority?.toLowerCase())) return false;
+      }
+
+      // Due date filter (only when assignment is not 'all')
+      if (filters.assignment !== 'all') {
+        if (filters.dueDate?.start || filters.dueDate?.end) {
+          if (!task.due_date) return false;
+          
+          const taskDate = new Date(task.due_date);
+          if (filters.dueDate.start) {
+            const startDate = new Date(filters.dueDate.start);
+            if (taskDate < startDate) return false;
+          }
+          if (filters.dueDate.end) {
+            const endDate = new Date(filters.dueDate.end);
+            if (taskDate > endDate) return false;
+          }
+        }
+
+        // Show overdue only
+        if (filters.showOverdue) {
+          if (!task.due_date) return false;
+          const taskDate = new Date(task.due_date);
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          if (taskDate >= today) return false;
+        }
+
+        // Has subtasks only
+        if (filters.hasSubtasks) {
+          if (!task.subtasks || task.subtasks.length === 0) return false;
+        }
+      }
+
+      return true;
+    });
+  }, []); // Empty deps - filtering logic doesn't change
   
   // Memoize filtered tasks to prevent recalculation on every render
-  const filteredTasks = useMemo(() => filterTasks(tasks, filters, userId), [tasks, filters, userId]);
+  const filteredTasks = useMemo(() => filterTasksMemo(tasks, filters, userId), [tasks, filters, userId, filterTasksMemo]);
 
   // Hide project column if no tasks match filters
   if (!loading && (!filteredTasks || filteredTasks.length === 0)) {
@@ -189,15 +192,18 @@ function ProjectTasks({ project, isDark, filters, userId, onNewTask, onTaskUpdat
       isDark={isDark}
       onNewTask={onNewTask}
       onTaskUpdate={onTaskUpdate}
+      onProjectUpdate={onProjectUpdate}
+      onSelectTaskForSubtask={onSelectTaskForSubtask}
     />
   );
 }
 
 /**
- * Experimental Fintech Dashboard
+ * Fintech Dashboard
  * Project-based kanban layout with comprehensive filters
+ * This is the main TaskPulse dashboard
  */
-export function FintechDashboard({ onExit }) {
+export function FintechDashboard() {
   const { user } = useAuth();
   // Initialize dark mode from localStorage or system preference
   const [isDark, setIsDark] = useState(() => {
@@ -209,7 +215,10 @@ export function FintechDashboard({ onExit }) {
   const [viewportWidth, setViewportWidth] = useState(window.innerWidth);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [selectedProjectForTask, setSelectedProjectForTask] = useState(null);
+  const [isSubtaskModalOpen, setIsSubtaskModalOpen] = useState(false);
+  const [selectedTaskForSubtask, setSelectedTaskForSubtask] = useState(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [refreshProjectsTrigger, setRefreshProjectsTrigger] = useState(0);
   
   // Toast notifications
   const { toasts, showSuccess, showError, showInfo, showWarning, removeToast } = useToast();
@@ -241,7 +250,7 @@ export function FintechDashboard({ onExit }) {
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
   const [pendingFilters, setPendingFilters] = useState(filters);
 
-  const { projects, loading: projectsLoading } = useProjects();
+  const { projects, loading: projectsLoading } = useProjects(refreshProjectsTrigger);
 
   // Handle viewport resize
   useEffect(() => {
@@ -306,14 +315,14 @@ export function FintechDashboard({ onExit }) {
 
   const boardContainerStyles = {
     flex: 1,
-    overflowX: 'scroll',
+    overflowX: 'auto',
     overflowY: 'auto',
     paddingLeft: sidebarState.isHidden ? 0 : isCollapsed ? layout.sidebar.collapsed : layout.sidebar.expanded,
     transition: `padding-left ${transition.normal}`,
     // Add bottom padding on mobile devices for the filter bar
     paddingBottom: isMobileDevice ? '80px' : spacing.xl,
-    // Always show horizontal scrollbar
-    scrollbarWidth: 'auto',
+    // Always show scrollbar to prevent flickering
+    scrollbarWidth: 'thin',
   };
 
   const boardStyles = {
@@ -340,6 +349,21 @@ export function FintechDashboard({ onExit }) {
   };
 
   const handleTaskUpdate = () => {
+    setRefreshTrigger(prev => prev + 1);
+  };
+
+  const handleProjectUpdate = () => {
+    setRefreshProjectsTrigger(prev => prev + 1);
+  };
+
+  const handleSelectTaskForSubtask = (task) => {
+    setSelectedTaskForSubtask(task);
+    setIsSubtaskModalOpen(true);
+  };
+
+  const handleSubtaskModalClose = () => {
+    setIsSubtaskModalOpen(false);
+    setSelectedTaskForSubtask(null);
     setRefreshTrigger(prev => prev + 1);
   };
 
@@ -444,6 +468,9 @@ export function FintechDashboard({ onExit }) {
                 userId={user?.id}
                 onNewTask={handleNewTask}
                 onTaskUpdate={handleTaskUpdate}
+                onProjectUpdate={handleProjectUpdate}
+                refreshTrigger={refreshTrigger}
+                onSelectTaskForSubtask={handleSelectTaskForSubtask}
               />
             ))
           )}
@@ -520,43 +547,23 @@ export function FintechDashboard({ onExit }) {
         </svg>
       </button>
 
-      {/* Exit Button */}
-      <button
-        onClick={onExit}
-        style={{
-          position: 'fixed',
-          bottom: spacing.lg,
-          left: spacing.lg,
-          padding: `${spacing.sm} ${spacing.lg}`,
-          backgroundColor: isDark ? colors.grayDark[200] : colors.grayLight[200],
-          border: 'none',
-          borderRadius: radius.md,
-          color: isDark ? theme.text.primary : colors.grayLight[700],
-          fontSize: '14px',
-          fontWeight: 500,
-          cursor: 'pointer',
-          transition: `all ${transition.fast}`,
-          zIndex: 100,
-          display: 'flex',
-          alignItems: 'center',
-          gap: spacing.sm,
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.backgroundColor = isDark ? colors.grayDark[300] : colors.grayLight[300];
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.backgroundColor = isDark ? colors.grayDark[200] : colors.grayLight[200];
-        }}
-      >
-        ← Exit
-      </button>
-
       {/* Task Modal */}
       {isTaskModalOpen && (
         <TaskModal
           isOpen={isTaskModalOpen}
           onClose={handleTaskModalClose}
           projectId={selectedProjectForTask}
+          onTasksRefresh={handleTaskUpdate}
+        />
+      )}
+
+      {/* Subtask Modal */}
+      {isSubtaskModalOpen && selectedTaskForSubtask && (
+        <CreateSubtaskModal
+          isOpen={isSubtaskModalOpen}
+          onClose={handleSubtaskModalClose}
+          taskId={selectedTaskForSubtask.id}
+          onSubtaskCreated={handleTaskUpdate}
         />
       )}
 

@@ -60,3 +60,42 @@
 .hide-scrollbar::-webkit-scrollbar {
   display: none;  /* Chrome, Safari, Opera */
 }
+
+/* Always show horizontal scrollbar to prevent flickering */
+.always-show-scrollbar-h {
+  overflow-x: scroll !important;
+  overflow-y: auto !important;
+}
+
+.always-show-scrollbar-h::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.always-show-scrollbar-h::-webkit-scrollbar-track {
+  background: #F3F4F6;
+}
+
+.always-show-scrollbar-h::-webkit-scrollbar-thumb {
+  background: #D1D5DB;
+  border-radius: 5px;
+}
+
+.always-show-scrollbar-h::-webkit-scrollbar-thumb:hover {
+  background: #9CA3AF;
+}
+
+/* Dark mode for always-show-scrollbar-h */
+@media (prefers-color-scheme: dark) {
+  .always-show-scrollbar-h::-webkit-scrollbar-track {
+    background: #27272A;
+  }
+  
+  .always-show-scrollbar-h::-webkit-scrollbar-thumb {
+    background: #52525B;
+  }
+  
+  .always-show-scrollbar-h::-webkit-scrollbar-thumb:hover {
+    background: #71717A;
+  }
+}

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from './useAuth';
 import { projectsApi } from '../services/api';
 
-export function useProjects() {
+export function useProjects(refreshTrigger = 0) {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -46,7 +46,7 @@ export function useProjects() {
     if (isAuthenticated) {
       fetchProjects();
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, refreshTrigger]);
 
   return {
     projects,

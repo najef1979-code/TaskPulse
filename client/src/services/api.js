@@ -24,7 +24,7 @@ export function setLogoutHandler(handler) {
   logoutHandler = handler;
 }
 
-async function request(method, path, body = null) {
+async function request(method, path, body = null, ignoreErrors = false) {
   const options = {
     method,
     headers: {
@@ -40,13 +40,22 @@ async function request(method, path, body = null) {
   const response = await fetch(`${API_URL}${path}`, options);
   
   if (!response.ok) {
-    const error = await response.json();
-    
     // Handle 401 Unauthorized - session expired or not authenticated
     if (response.status === 401) {
       if (logoutHandler) {
         logoutHandler();
       }
+      // Don't throw for 401 errors - they're handled by logoutHandler
+      // This prevents infinite render loops in components
+      return { success: false, error: 'Unauthorized' };
+    }
+
+    // Try to parse error, but handle cases where response is not JSON
+    let error = { error: 'Request failed' };
+    try {
+      error = await response.json();
+    } catch (e) {
+      // Response might not be JSON
     }
     
     throw new Error(error.error || 'Request failed');
@@ -59,7 +68,7 @@ async function request(method, path, body = null) {
 export const authApi = {
   register: (userData) => request('POST', '/auth/register', userData),
   login: (username, password) => request('POST', '/auth/login', { username, password }),
-  logout: () => request('POST', '/auth/logout'),
+  logout: () => request('POST', '/auth/logout', null, true), // Ignore errors - session might already be invalid
   getMe: () => request('GET', '/auth/me'),
   updatePassword: (oldPassword, newPassword) => request('POST', '/auth/update-password', { oldPassword, newPassword }),
   updateLastVisit: () => request('POST', '/auth/update-last-visit'),
