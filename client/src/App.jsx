@@ -5,8 +5,8 @@ import { Register } from './components/Register';
 import { WhatsNewPopup } from './components/WhatsNewPopup';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { activityApi } from './services/api';
-import { FintechDashboard } from './experimental/FintechDashboard';
-import { ErrorBoundary as ExperimentalErrorBoundary } from './experimental/components/ErrorBoundary';
+import { FintechDashboard } from './main-dashboard/FintechDashboard';
+import { ErrorBoundary as ExperimentalErrorBoundary } from './main-dashboard/components/ErrorBoundary';
 import './App.css';
 
 function AppContent() {
