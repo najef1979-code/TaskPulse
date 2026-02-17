@@ -123,15 +123,16 @@ to complete without your input. The AI Assistent can create Projects, Tasks and 
 
 *Clean, modern login interface with optional registration link*
 
-### Dashboard - Kanban Board
-<img src="https://github.com/najef1979-code/TaskPulse/blob/main/TaskPulse-DashBoard.png?raw=true" alt="TaskPulse Dashboard" width="800"/>
+### Dashboard - Kanban Board light theme
+<img src="https://github.com/najef1979-code/TemPAzure/blob/main/TaskPulse-light-theme.png?raw=true" alt="TaskPulse Dashboard" width="800"/>
 
 *Full-featured Kanban board with drag-and-drop task management, priority badges, and project navigation*
 
-### My Assignments View
-<img src="https://github.com/najef1979-code/TaskPulse/blob/main/TaskPulse-MyAssingments.png?raw=true" alt="TaskPulse My Assignments" width="800"/>
+### Dashboard - Kanban Board dark theme
+<img src="https://github.com/najef1979-code/TemPAzure/blob/main/TaskPulse-dark-theme.png?raw=true" alt="TaskPulse Dashboard" width="800"/>
 
-*Dedicated view for tracking assigned tasks with status indicators and quick actions*
+*Full-featured Kanban board with drag-and-drop task management, priority badges, and project navigation*
+
 
 ---
 
