@@ -310,15 +310,11 @@ export function KanbanColumn({
 
   const handleDeleteProject = async () => {
     setShowMenu(false);
-    
-    const taskCount = tasks.length;
-    const subtaskCount = tasks.reduce((sum, task) => {
-      // Estimate subtask count from task data
-      return sum + (task.subtask_count || 0);
-    }, 0);
 
-    const message = taskCount > 0 || subtaskCount > 0
-      ? `⚠️ This will delete "${project.name}" and ALL its data:\n\n• ${taskCount} task${taskCount > 1 ? 's' : ''}\n• ${subtaskCount} subtask${subtaskCount > 1 ? 's' : ''}\n\nThis action cannot be undone. Are you sure?`
+    const taskCount = tasks.length;
+
+    const message = taskCount > 0
+      ? `⚠️ This will delete "${project.name}" and ALL its data:\n\n• ${taskCount} task${taskCount > 1 ? 's' : ''}\n• All subtasks within those tasks\n\nThis action cannot be undone. Are you sure?`
       : `Delete project "${project.name}"?`;
 
     if (!confirm(message)) {
